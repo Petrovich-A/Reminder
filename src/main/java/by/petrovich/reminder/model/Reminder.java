@@ -30,6 +30,7 @@ public class Reminder {
     @Column(nullable = false)
     private LocalDateTime remind;
 
+    @Column(nullable = false)
     private Long userId;
 
 }
