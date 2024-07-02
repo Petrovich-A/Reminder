@@ -7,9 +7,12 @@ import by.petrovich.reminder.model.Reminder;
 import by.petrovich.reminder.repository.ReminderRepository;
 import by.petrovich.reminder.service.ReminderService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -56,4 +59,31 @@ public class ReminderServiceImpl implements ReminderService {
         Reminder saved = reminderRepository.save(reminderUpdated);
         return reminderMapper.toResponseDto(saved);
     }
+
+    @Override
+    public List<ReminderResponseDto> findByTitle(String title) {
+        List<Reminder> reminders = reminderRepository.findByTitleContainingIgnoreCase(title);
+        return reminders.stream()
+                .map(reminderMapper::toResponseDto)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<ReminderResponseDto> findByDescription(String description) {
+        List<Reminder> reminders = reminderRepository.findByDescriptionContainingIgnoreCase(description);
+        return reminders.stream()
+                .map(reminderMapper::toResponseDto)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<ReminderResponseDto> findByDate(String date) {
+        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        LocalDateTime dateTime = LocalDateTime.parse(date, dateTimeFormatter);
+        List<Reminder> reminders = reminderRepository.findRemindersByRemind(dateTime);
+        return reminders.stream()
+                .map(reminderMapper::toResponseDto)
+                .collect(Collectors.toList());
+    }
+
 }

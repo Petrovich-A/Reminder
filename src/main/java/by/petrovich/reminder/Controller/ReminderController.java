@@ -5,6 +5,7 @@ import by.petrovich.reminder.dto.response.ReminderResponseDto;
 import by.petrovich.reminder.model.Reminder;
 import by.petrovich.reminder.service.impl.ReminderServiceImpl;
 import lombok.RequiredArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -61,6 +63,22 @@ public class ReminderController {
     public ResponseEntity<ReminderResponseDto> update(@PathVariable Long id,
                                                       @RequestBody ReminderRequestDto reminderRequestDto) {
         return ResponseEntity.status(OK).body(reminderService.update(id, reminderRequestDto));
+    }
+
+    @GetMapping("/")
+    public ResponseEntity<List<ReminderResponseDto>> searchByCriteria(@RequestParam(value = "title", required = false) String title,
+                                                                      @RequestParam(value = "description", required = false) String description,
+                                                                      @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+                                                                      @RequestParam(value = "date", required = false) String date) {
+        if (title != null) {
+            return ResponseEntity.status(OK).body(reminderService.findByTitle(title));
+        } else if (description != null) {
+            return ResponseEntity.status(OK).body(reminderService.findByDescription(description));
+        } else if (date != null) {
+            return ResponseEntity.status(OK).body(reminderService.findByDate(date));
+        } else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
     }
 
 }

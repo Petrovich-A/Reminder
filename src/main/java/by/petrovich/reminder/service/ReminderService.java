@@ -17,4 +17,10 @@ public interface ReminderService {
     void delete(Long id);
 
     ReminderResponseDto update(Long id, ReminderRequestDto reminderRequestDto);
+
+    List<ReminderResponseDto> findByTitle(String title);
+
+    List<ReminderResponseDto> findByDescription(String description);
+
+    List<ReminderResponseDto> findByDate(String date);
 }
