@@ -16,7 +16,7 @@ import java.time.LocalDateTime;
 public class Reminder {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "reminder_seq")
-    @SequenceGenerator(name = "reminder_seq", sequenceName = "reminder_id_seq")
+    @SequenceGenerator(name = "reminder_seq", sequenceName = "reminder_id_seq", allocationSize = 10)
     @Column(columnDefinition = "bigint")
     private Long id;
 
