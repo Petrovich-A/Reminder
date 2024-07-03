@@ -2,12 +2,12 @@ package by.petrovich.reminder.service.impl;
 
 import by.petrovich.reminder.dto.request.ReminderRequestDto;
 import by.petrovich.reminder.dto.response.ReminderResponseDto;
+import by.petrovich.reminder.exception.ReminderNotFoundException;
 import by.petrovich.reminder.mapper.ReminderMapper;
 import by.petrovich.reminder.model.Reminder;
 import by.petrovich.reminder.repository.ReminderRepository;
 import by.petrovich.reminder.service.ReminderService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,8 +32,9 @@ public class ReminderServiceImpl implements ReminderService {
     }
 
     @Override
-    public Optional<Reminder> find(Long id) {
-        return reminderRepository.findById(id);
+    public ReminderResponseDto find(Long id) throws ReminderNotFoundException {
+        return reminderMapper.toResponseDto(reminderRepository.findById(id)
+                .orElseThrow(() -> new ReminderNotFoundException("Reminder not found")));
     }
 
     @Override
@@ -45,19 +46,25 @@ public class ReminderServiceImpl implements ReminderService {
 
     @Override
     @Transactional
-    public void delete(Long id) {
+    public void delete(Long id) throws ReminderNotFoundException {
         if (reminderRepository.existsById(id)) {
             reminderRepository.deleteById(id);
+        } else {
+            throw new ReminderNotFoundException("Reminder not found");
         }
     }
 
     @Override
     @Transactional
-    public ReminderResponseDto update(Long id, ReminderRequestDto reminderRequestDto) {
+    public ReminderResponseDto update(Long id, ReminderRequestDto reminderRequestDto) throws ReminderNotFoundException {
         Optional<Reminder> optionalReminder = reminderRepository.findById(id);
-        Reminder reminderUpdated = reminderMapper.toEntityUpdate(reminderRequestDto, optionalReminder.get());
-        Reminder saved = reminderRepository.save(reminderUpdated);
-        return reminderMapper.toResponseDto(saved);
+        if (optionalReminder.isEmpty()) {
+            throw new ReminderNotFoundException("Reminder not found");
+        } else {
+            Reminder reminderUpdated = reminderMapper.toEntityUpdate(reminderRequestDto, optionalReminder.get());
+            Reminder saved = reminderRepository.save(reminderUpdated);
+            return reminderMapper.toResponseDto(saved);
+        }
     }
 
     @Override

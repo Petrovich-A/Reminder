@@ -3,11 +3,12 @@ package by.petrovich.reminder.Controller.impl;
 import by.petrovich.reminder.Controller.ReminderController;
 import by.petrovich.reminder.dto.request.ReminderRequestDto;
 import by.petrovich.reminder.dto.response.ReminderResponseDto;
-import by.petrovich.reminder.model.Reminder;
+import by.petrovich.reminder.exception.ReminderNotFoundException;
 import by.petrovich.reminder.service.impl.ReminderServiceImpl;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,8 +21,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
-import java.util.Optional;
 
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
+import static org.springframework.http.HttpStatus.CREATED;
+import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 import static org.springframework.http.HttpStatus.NO_CONTENT;
 import static org.springframework.http.HttpStatus.OK;
@@ -30,45 +33,78 @@ import static org.springframework.http.HttpStatus.OK;
 @RequestMapping("/api/v1/reminders")
 @RequiredArgsConstructor
 public class ReminderControllerImpl implements ReminderController {
+    private static final Logger logger = LoggerFactory.getLogger(ReminderControllerImpl.class);
     private final ReminderServiceImpl reminderService;
 
     @Override
     @GetMapping
     public ResponseEntity<List<ReminderResponseDto>> findAll() {
-        return ResponseEntity.status(OK).body(reminderService.findAll());
+        try {
+            return ResponseEntity.status(OK).body(reminderService.findAll());
+        } catch (Exception e) {
+            logger.error("Unexpected error occurred while finding all reminders", e);
+            return ResponseEntity.status(INTERNAL_SERVER_ERROR).build();
+        }
     }
 
     @Override
     @GetMapping("/{id}")
-    public ResponseEntity<Reminder> find(@PathVariable Long id) {
-        Optional<Reminder> optionalReminder = reminderService.find(id);
-        if (optionalReminder.isPresent()) {
-            Reminder reminder = optionalReminder.get();
-            System.out.println("Reminder found: " + reminder);
-            return ResponseEntity.status(OK).body(reminder);
-        } else {
+    public ResponseEntity<ReminderResponseDto> find(@PathVariable Long id) {
+        if (id <= 0) {
+            logger.error("Invalid id supplied: {}", id);
+            return ResponseEntity.status(BAD_REQUEST).build();
+        }
+        try {
+            ReminderResponseDto reminderResponseDto = reminderService.find(id);
+            return ResponseEntity.status(OK).body(reminderResponseDto);
+        } catch (ReminderNotFoundException e) {
+            logger.error("Reminder not found with id: {}", id);
             return ResponseEntity.status(NOT_FOUND).build();
+        } catch (Exception e) {
+            logger.error("Unexpected error occurred while finding reminder with id: {}", id, e);
+            return ResponseEntity.status(INTERNAL_SERVER_ERROR).build();
         }
     }
 
     @Override
     @PostMapping("/")
     public ResponseEntity<ReminderResponseDto> create(@RequestBody ReminderRequestDto reminderRequestDto) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(reminderService.create(reminderRequestDto));
+        try {
+            return ResponseEntity.status(CREATED).body(reminderService.create(reminderRequestDto));
+        } catch (Exception e) {
+            logger.error("Error occurred while creating a reminder", e);
+            return ResponseEntity.status(BAD_REQUEST).build();
+        }
     }
 
     @Override
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
-        reminderService.delete(id);
-        return ResponseEntity.status(NO_CONTENT).build();
+        try {
+            reminderService.delete(id);
+            return ResponseEntity.status(NO_CONTENT).build();
+        } catch (ReminderNotFoundException e) {
+            logger.error("Reminder not found with id: {}", id, e);
+            return ResponseEntity.status(NOT_FOUND).build();
+        } catch (Exception e) {
+            logger.error("Error occurred while deleting a reminder", e);
+            return ResponseEntity.status(BAD_REQUEST).build();
+        }
     }
 
     @Override
     @PutMapping("/{id}")
     public ResponseEntity<ReminderResponseDto> update(@PathVariable Long id,
                                                       @RequestBody ReminderRequestDto reminderRequestDto) {
-        return ResponseEntity.status(OK).body(reminderService.update(id, reminderRequestDto));
+        try {
+            return ResponseEntity.status(OK).body(reminderService.update(id, reminderRequestDto));
+        } catch (ReminderNotFoundException e) {
+            logger.error("Reminder not found with id: {}", id, e);
+            return ResponseEntity.status(NOT_FOUND).build();
+        } catch (Exception e) {
+            logger.error("Error occurred while updating a reminder", e);
+            return ResponseEntity.status(BAD_REQUEST).build();
+        }
     }
 
     @Override
@@ -84,7 +120,7 @@ public class ReminderControllerImpl implements ReminderController {
         } else if (date != null) {
             return ResponseEntity.status(OK).body(reminderService.findByDate(date));
         } else {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+            return ResponseEntity.status(BAD_REQUEST).build();
         }
     }
 

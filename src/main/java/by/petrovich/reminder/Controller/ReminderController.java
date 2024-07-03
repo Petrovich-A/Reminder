@@ -11,11 +11,11 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PutMapping;
 
 import java.util.List;
 
 @Tag(name = "Reminder", description = "API for managing reminders")
+
 public interface ReminderController {
 
     @Operation(summary = "Find all reminders")
@@ -38,7 +38,7 @@ public interface ReminderController {
             @ApiResponse(responseCode = "404", description = "Reminder not found",
                     content = @Content)
     })
-    ResponseEntity<Reminder> find(@Parameter(description = "id of reminder to be searched", example = "1") Long id);
+    ResponseEntity<ReminderResponseDto> find(@Parameter(description = "id of reminder to be searched", example = "1") Long id);
 
     @Operation(summary = "Create a new reminder")
     @ApiResponses(value = {
@@ -73,7 +73,6 @@ public interface ReminderController {
             @ApiResponse(responseCode = "404", description = "Reminder not found",
                     content = @Content)
     })
-    @PutMapping("/reminders/{id}")
     ResponseEntity<ReminderResponseDto> update(@Parameter(description = "id of reminder to be updated", example = "999")
                                                Long id,
                                                @Parameter(description = "Updated reminder data", example = "{\"title\": \"titleUpdate\", \"description\": \"descriptionUpdate\", \"userId\": 999}")
