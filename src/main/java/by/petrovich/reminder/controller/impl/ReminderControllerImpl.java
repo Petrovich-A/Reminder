@@ -1,6 +1,6 @@
-package by.petrovich.reminder.Controller.impl;
+package by.petrovich.reminder.controller.impl;
 
-import by.petrovich.reminder.Controller.ReminderController;
+import by.petrovich.reminder.controller.ReminderController;
 import by.petrovich.reminder.dto.request.ReminderRequestDto;
 import by.petrovich.reminder.dto.response.ReminderResponseDto;
 import by.petrovich.reminder.exception.ReminderNotFoundException;

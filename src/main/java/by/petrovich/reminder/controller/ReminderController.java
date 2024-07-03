@@ -1,4 +1,4 @@
-package by.petrovich.reminder.Controller;
+package by.petrovich.reminder.controller;
 
 import by.petrovich.reminder.dto.request.ReminderRequestDto;
 import by.petrovich.reminder.dto.response.ReminderResponseDto;
