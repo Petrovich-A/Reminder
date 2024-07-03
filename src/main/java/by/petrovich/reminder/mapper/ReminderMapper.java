@@ -15,7 +15,6 @@ public interface ReminderMapper {
     ReminderResponseDto toResponseDto(Reminder reminder);
 
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "remind", expression = "java(java.time.LocalDateTime.now())")
     Reminder toEntity(ReminderRequestDto reminderRequestDto);
 
     @Mapping(target = "id", ignore = true)

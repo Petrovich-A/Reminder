@@ -5,6 +5,7 @@ import by.petrovich.reminder.dto.request.ReminderRequestDto;
 import by.petrovich.reminder.dto.response.ReminderResponseDto;
 import by.petrovich.reminder.exception.ReminderNotFoundException;
 import by.petrovich.reminder.service.impl.ReminderServiceImpl;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -68,7 +69,7 @@ public class ReminderControllerImpl implements ReminderController {
 
     @Override
     @PostMapping("/")
-    public ResponseEntity<ReminderResponseDto> create(@RequestBody ReminderRequestDto reminderRequestDto) {
+    public ResponseEntity<ReminderResponseDto> create(@RequestBody @Valid ReminderRequestDto reminderRequestDto) {
         try {
             return ResponseEntity.status(CREATED).body(reminderService.create(reminderRequestDto));
         } catch (Exception e) {
@@ -95,7 +96,7 @@ public class ReminderControllerImpl implements ReminderController {
     @Override
     @PutMapping("/{id}")
     public ResponseEntity<ReminderResponseDto> update(@PathVariable Long id,
-                                                      @RequestBody ReminderRequestDto reminderRequestDto) {
+                                                      @RequestBody @Valid ReminderRequestDto reminderRequestDto) {
         try {
             return ResponseEntity.status(OK).body(reminderService.update(id, reminderRequestDto));
         } catch (ReminderNotFoundException e) {
@@ -109,10 +110,10 @@ public class ReminderControllerImpl implements ReminderController {
 
     @Override
     @GetMapping("/")
-    public ResponseEntity<List<ReminderResponseDto>> searchByCriteria(@RequestParam(value = "title", required = false) String title,
-                                                                      @RequestParam(value = "description", required = false) String description,
+    public ResponseEntity<List<ReminderResponseDto>> searchByCriteria(@RequestParam(value = "title", required = false) @Valid String title,
+                                                                      @RequestParam(value = "description", required = false) @Valid String description,
                                                                       @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-                                                                      @RequestParam(value = "date", required = false) String date) {
+                                                                      @RequestParam(value = "date", required = false) @Valid String date) {
         if (title != null) {
             return ResponseEntity.status(OK).body(reminderService.findByTitle(title));
         } else if (description != null) {
