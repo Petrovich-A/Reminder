@@ -2,7 +2,6 @@ package by.petrovich.reminder.controller;
 
 import by.petrovich.reminder.dto.request.ReminderRequestDto;
 import by.petrovich.reminder.dto.response.ReminderResponseDto;
-import by.petrovich.reminder.model.Reminder;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -11,6 +10,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
@@ -18,9 +18,9 @@ import java.util.List;
 
 public interface ReminderController {
 
-    @Operation(summary = "Find all reminders")
+    @Operation(summary = "Find all reminders with pagination")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Found all reminders", content = {@Content(mediaType = "application/json",
+            @ApiResponse(responseCode = "200", description = "Found paginated reminders", content = {@Content(mediaType = "application/json",
                     schema = @Schema(implementation = ReminderResponseDto.class))}),
             @ApiResponse(responseCode = "400", description = "Invalid size or page value", content = @Content),
             @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content)
@@ -28,11 +28,23 @@ public interface ReminderController {
     ResponseEntity<List<ReminderResponseDto>> findAll(@Parameter(description = "page number to be displayed", example = "1") int page,
                                                       @Parameter(description = "reminders amount to be displayed on the page", example = "4") int size);
 
+    @Operation(summary = "Find all reminders with sorting")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Found all reminders with sorting by field and direction", content = {@Content(mediaType = "application/json",
+                    schema = @Schema(implementation = ReminderResponseDto.class))}),
+            @ApiResponse(responseCode = "400", description = "Invalid sortDirection or sortBy value", content = @Content),
+            @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content)
+    })
+    ResponseEntity<List<ReminderResponseDto>> findAll(@Parameter(description = "Direction of sorting: ASC (ascending) or DESC (descending)", example = "ASC")
+                                                      @RequestParam(name = "sortDirection", required = false) String sortDirection,
+                                                      @Parameter(description = "Field by which to sort the reminders (e.g., id, title)", example = "title")
+                                                      @RequestParam(name = "sortBy", required = false) String sortBy);
+
     @Operation(summary = "Find a reminder by its id")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Found the reminder",
                     content = {@Content(mediaType = "application/json",
-                            schema = @Schema(implementation = Reminder.class))}),
+                            schema = @Schema(implementation = ReminderResponseDto.class))}),
             @ApiResponse(responseCode = "400", description = "Invalid id supplied",
                     content = @Content),
             @ApiResponse(responseCode = "404", description = "Reminder not found",

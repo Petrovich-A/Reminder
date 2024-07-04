@@ -11,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -50,6 +51,20 @@ public class ReminderControllerImpl implements ReminderController {
         try {
             Pageable pageable = PageRequest.of(page, size);
             return ResponseEntity.status(OK).body(reminderService.findAll(pageable));
+        } catch (Exception e) {
+            logger.error("Unexpected error occurred while finding all reminders", e);
+            return ResponseEntity.status(INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+    @Override
+    @GetMapping("/sort")
+    public ResponseEntity<List<ReminderResponseDto>> findAll(@RequestParam(defaultValue = "ASC") String sortDirection,
+                                                             @RequestParam(defaultValue = "id") String sortBy) {
+        try {
+            Sort.Direction direction = sortDirection.equalsIgnoreCase("asc") ? Sort.Direction.ASC : Sort.Direction.DESC;
+            Sort sort = Sort.by(direction, sortBy);
+            return ResponseEntity.status(OK).body(reminderService.findAll(sort));
         } catch (Exception e) {
             logger.error("Unexpected error occurred while finding all reminders", e);
             return ResponseEntity.status(INTERNAL_SERVER_ERROR).build();

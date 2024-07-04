@@ -10,6 +10,7 @@ import by.petrovich.reminder.service.ReminderService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,6 +30,13 @@ public class ReminderServiceImpl implements ReminderService {
     @Override
     public List<ReminderResponseDto> findAll(Pageable pageable) {
         Page<Reminder> reminders = reminderRepository.findAll(pageable);
+        return reminders.stream().map(reminderMapper::toResponseDto)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<ReminderResponseDto> findAll(Sort sort) {
+        List<Reminder> reminders = reminderRepository.findAll(sort);
         return reminders.stream().map(reminderMapper::toResponseDto)
                 .collect(Collectors.toList());
     }
