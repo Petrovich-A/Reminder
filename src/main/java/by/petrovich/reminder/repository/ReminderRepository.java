@@ -14,4 +14,6 @@ public interface ReminderRepository extends JpaRepository<Reminder, Long> {
     List<Reminder> findByDescriptionContainingIgnoreCase(String description);
 
     List<Reminder> findRemindersByRemind(LocalDateTime date);
+
+    List<Reminder> findRemindersByRemindBefore(LocalDateTime date);
 }

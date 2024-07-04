@@ -26,3 +26,7 @@ spring:
 springdoc:
   api-docs:
     path: /api-docs.html
+
+telegram:
+  bot:
+    token: '7230385731:AAFPsBQ6mMNpQO9a7vH6iSOyjwkPYW901f4'
