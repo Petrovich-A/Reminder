@@ -9,6 +9,8 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -39,9 +41,15 @@ public class ReminderControllerImpl implements ReminderController {
 
     @Override
     @GetMapping
-    public ResponseEntity<List<ReminderResponseDto>> findAll() {
+    public ResponseEntity<List<ReminderResponseDto>> findAll(@RequestParam(name = "page", defaultValue = "0") int page,
+                                                             @RequestParam(name = "size", defaultValue = "3") int size) {
+        if (page < 0 || size <= 0) {
+            logger.error("Invalid page {} or size value: {}", page, size);
+            return ResponseEntity.status(BAD_REQUEST).build();
+        }
         try {
-            return ResponseEntity.status(OK).body(reminderService.findAll());
+            Pageable pageable = PageRequest.of(page, size);
+            return ResponseEntity.status(OK).body(reminderService.findAll(pageable));
         } catch (Exception e) {
             logger.error("Unexpected error occurred while finding all reminders", e);
             return ResponseEntity.status(INTERNAL_SERVER_ERROR).build();
@@ -110,10 +118,10 @@ public class ReminderControllerImpl implements ReminderController {
 
     @Override
     @GetMapping("/")
-    public ResponseEntity<List<ReminderResponseDto>> searchByCriteria(@RequestParam(value = "title", required = false) @Valid String title,
-                                                                      @RequestParam(value = "description", required = false) @Valid String description,
+    public ResponseEntity<List<ReminderResponseDto>> searchByCriteria(@RequestParam(value = "title", required = false) String title,
+                                                                      @RequestParam(value = "description", required = false) String description,
                                                                       @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-                                                                      @RequestParam(value = "date", required = false) @Valid String date) {
+                                                                      @RequestParam(value = "date", required = false) String date) {
         if (title != null) {
             return ResponseEntity.status(OK).body(reminderService.findByTitle(title));
         } else if (description != null) {

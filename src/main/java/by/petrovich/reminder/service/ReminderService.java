@@ -3,11 +3,12 @@ package by.petrovich.reminder.service;
 import by.petrovich.reminder.dto.request.ReminderRequestDto;
 import by.petrovich.reminder.dto.response.ReminderResponseDto;
 import by.petrovich.reminder.exception.ReminderNotFoundException;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
 public interface ReminderService {
-    List<ReminderResponseDto> findAll();
+    List<ReminderResponseDto> findAll(Pageable pageable);
 
     ReminderResponseDto find(Long id) throws ReminderNotFoundException;
 

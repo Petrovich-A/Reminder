@@ -20,13 +20,13 @@ public interface ReminderController {
 
     @Operation(summary = "Find all reminders")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Found all reminders",
-                    content = {@Content(mediaType = "application/json",
-                            schema = @Schema(implementation = ReminderResponseDto.class))}),
-            @ApiResponse(responseCode = "500", description = "Internal server error",
-                    content = @Content)
+            @ApiResponse(responseCode = "200", description = "Found all reminders", content = {@Content(mediaType = "application/json",
+                    schema = @Schema(implementation = ReminderResponseDto.class))}),
+            @ApiResponse(responseCode = "400", description = "Invalid size or page value", content = @Content),
+            @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content)
     })
-    ResponseEntity<List<ReminderResponseDto>> findAll();
+    ResponseEntity<List<ReminderResponseDto>> findAll(@Parameter(description = "page number to be displayed", example = "1") int page,
+                                                      @Parameter(description = "reminders amount to be displayed on the page", example = "4") int size);
 
     @Operation(summary = "Find a reminder by its id")
     @ApiResponses(value = {
