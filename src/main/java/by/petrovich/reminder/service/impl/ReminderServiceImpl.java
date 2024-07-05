@@ -1,5 +1,6 @@
 package by.petrovich.reminder.service.impl;
 
+import by.petrovich.reminder.constant.Constant;
 import by.petrovich.reminder.dto.request.ReminderRequestDto;
 import by.petrovich.reminder.dto.response.ReminderResponseDto;
 import by.petrovich.reminder.exception.ReminderNotFoundException;
@@ -19,6 +20,8 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
+import static by.petrovich.reminder.constant.Constant.FORMAT_PATTERN;
 
 @Service
 @RequiredArgsConstructor
@@ -94,7 +97,7 @@ public class ReminderServiceImpl implements ReminderService {
 
     @Override
     public List<ReminderResponseDto> findByDate(String date) {
-        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern(FORMAT_PATTERN);
         LocalDateTime dateTime = LocalDateTime.parse(date, dateTimeFormatter);
         List<Reminder> reminders = reminderRepository.findRemindersByRemind(dateTime);
         return reminders.stream()
