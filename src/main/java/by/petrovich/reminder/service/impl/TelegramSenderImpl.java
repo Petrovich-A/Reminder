@@ -20,11 +20,16 @@ import static org.springframework.http.HttpMethod.POST;
 @Service
 public class TelegramSenderImpl implements Sender {
     private static final Logger logger = LoggerFactory.getLogger(TelegramSenderImpl.class);
-    private static final String TELEGRAM_API_URL = "https://api.telegram.org/bot";
-    private static final String TELEGRAM_API_COMMAND = "/sendMessage";
 
     @Value("${telegram.bot.token}")
     private String botToken;
+
+    @Value("${telegram.api.url}")
+    private String getTelegramApiUrl;
+
+    @Value("${telegram.api.command}")
+    private String getTelegramApiCommand;
+
 
     @Override
     public void send(User user, Reminder reminder) {
@@ -55,7 +60,7 @@ public class TelegramSenderImpl implements Sender {
     }
 
     private String buildUrl() {
-        return TELEGRAM_API_URL + botToken + TELEGRAM_API_COMMAND;
+        return getTelegramApiUrl + botToken + getTelegramApiCommand;
     }
 
 }

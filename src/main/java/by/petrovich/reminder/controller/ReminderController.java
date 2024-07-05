@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -25,7 +26,7 @@ public interface ReminderController {
             @ApiResponse(responseCode = "400", description = "Invalid size or page value", content = @Content),
             @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content)
     })
-    ResponseEntity<List<ReminderResponseDto>> findAll(@Parameter(description = "page number to be displayed", example = "1") int page,
+    ResponseEntity<Page<ReminderResponseDto>> findAll(@Parameter(description = "page number to be displayed", example = "1") int page,
                                                       @Parameter(description = "reminders amount to be displayed on the page", example = "4") int size);
 
     @Operation(summary = "Find all reminders with sorting")

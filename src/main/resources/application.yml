@@ -30,3 +30,9 @@ springdoc:
 telegram:
   bot:
     token: '7230385731:AAFPsBQ6mMNpQO9a7vH6iSOyjwkPYW901f4'
+  api:
+    url: 'https://api.telegram.org/bot'
+    command: '/sendMessage'
+
+scheduling:
+  interval: 60000

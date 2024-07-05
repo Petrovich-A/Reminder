@@ -1,9 +1,9 @@
-package by.petrovich.reminder.service.impl;
+package by.petrovich.reminder.job.impl;
 
+import by.petrovich.reminder.job.ReminderScheduler;
 import by.petrovich.reminder.model.Reminder;
 import by.petrovich.reminder.model.User;
 import by.petrovich.reminder.repository.ReminderRepository;
-import by.petrovich.reminder.service.ReminderScheduler;
 import by.petrovich.reminder.service.Sender;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -19,7 +19,7 @@ public class ReminderSchedulerIml implements ReminderScheduler {
     private final Sender telegramSender;
 
     @Override
-    @Scheduled(fixedRate = 60000)
+    @Scheduled(fixedDelayString = "${scheduling.interval}")
     public void sendReminder() {
         List<Reminder> remindersToSend = reminderRepository.findRemindersByRemindBefore(LocalDateTime.now());
 

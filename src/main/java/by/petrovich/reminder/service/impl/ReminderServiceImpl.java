@@ -28,10 +28,9 @@ public class ReminderServiceImpl implements ReminderService {
     private final ReminderMapper reminderMapper;
 
     @Override
-    public List<ReminderResponseDto> findAll(Pageable pageable) {
+    public Page<ReminderResponseDto> findAll(Pageable pageable) {
         Page<Reminder> reminders = reminderRepository.findAll(pageable);
-        return reminders.stream().map(reminderMapper::toResponseDto)
-                .collect(Collectors.toList());
+        return reminders.map(reminderMapper::toResponseDto);
     }
 
     @Override

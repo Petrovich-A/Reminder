@@ -9,6 +9,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -42,7 +43,7 @@ public class ReminderControllerImpl implements ReminderController {
 
     @Override
     @GetMapping
-    public ResponseEntity<List<ReminderResponseDto>> findAll(@RequestParam(name = "page", defaultValue = "0") int page,
+    public ResponseEntity<Page<ReminderResponseDto>> findAll(@RequestParam(name = "page", defaultValue = "0") int page,
                                                              @RequestParam(name = "size", defaultValue = "3") int size) {
         if (page < 0 || size <= 0) {
             logger.error("Invalid page {} or size value: {}", page, size);
