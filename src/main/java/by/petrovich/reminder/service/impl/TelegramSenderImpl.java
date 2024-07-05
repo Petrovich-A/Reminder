@@ -38,7 +38,7 @@ public class TelegramSenderImpl implements Sender {
         try {
             ResponseEntity<String> response = restTemplate.exchange(buildUrl(), POST, entity, String.class);
             if (response.getStatusCode().is2xxSuccessful()) {
-                logger.info("Message successfully sent to Telegram!");
+                logger.info("Message successfully sent to Telegram. Time: {}", System.currentTimeMillis());
             } else {
                 logger.error("Error sending message to Telegram: Status Code - {}, Response Body - {}", response.getStatusCode(), response.getBody());
             }

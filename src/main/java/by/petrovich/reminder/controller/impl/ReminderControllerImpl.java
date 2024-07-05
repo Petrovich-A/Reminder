@@ -1,6 +1,5 @@
 package by.petrovich.reminder.controller.impl;
 
-import by.petrovich.reminder.constant.Constant;
 import by.petrovich.reminder.controller.ReminderController;
 import by.petrovich.reminder.dto.request.ReminderRequestDto;
 import by.petrovich.reminder.dto.response.ReminderResponseDto;
@@ -14,7 +13,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,7 +26,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
-import static by.petrovich.reminder.constant.Constant.FORMAT_PATTERN;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
@@ -138,7 +135,6 @@ public class ReminderControllerImpl implements ReminderController {
     @GetMapping("/")
     public ResponseEntity<List<ReminderResponseDto>> searchByCriteria(@RequestParam(value = "title", required = false) String title,
                                                                       @RequestParam(value = "description", required = false) String description,
-                                                                      @DateTimeFormat(pattern = FORMAT_PATTERN)
                                                                       @RequestParam(value = "date", required = false) String date) {
         if (title != null) {
             return ResponseEntity.status(OK).body(reminderService.findByTitle(title));
