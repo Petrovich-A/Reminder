@@ -1,6 +1,5 @@
 package by.petrovich.reminder.controller.impl;
 
-import by.petrovich.reminder.controller.ReminderController;
 import by.petrovich.reminder.dto.request.ReminderRequestDto;
 import by.petrovich.reminder.dto.response.ReminderResponseDto;
 import by.petrovich.reminder.exception.ReminderNotFoundException;
@@ -36,11 +35,10 @@ import static org.springframework.http.HttpStatus.OK;
 @RestController
 @RequestMapping("/api/v1/reminders")
 @RequiredArgsConstructor
-public class ReminderControllerImpl implements ReminderController {
+public class ReminderControllerImpl {
     private static final Logger logger = LoggerFactory.getLogger(ReminderControllerImpl.class);
     private final ReminderServiceImpl reminderService;
 
-    @Override
     @GetMapping
     public ResponseEntity<Page<ReminderResponseDto>> findAll(@RequestParam(name = "page", defaultValue = "0") int page,
                                                              @RequestParam(name = "size", defaultValue = "3") int size) {
@@ -57,7 +55,6 @@ public class ReminderControllerImpl implements ReminderController {
         }
     }
 
-    @Override
     @GetMapping("/sort")
     public ResponseEntity<List<ReminderResponseDto>> findAll(@RequestParam(defaultValue = "ASC") String sortDirection,
                                                              @RequestParam(defaultValue = "id") String sortBy) {
@@ -71,7 +68,6 @@ public class ReminderControllerImpl implements ReminderController {
         }
     }
 
-    @Override
     @GetMapping("/{id}")
     public ResponseEntity<ReminderResponseDto> find(@PathVariable Long id) {
         if (id <= 0) {
@@ -90,7 +86,6 @@ public class ReminderControllerImpl implements ReminderController {
         }
     }
 
-    @Override
     @PostMapping("/")
     public ResponseEntity<ReminderResponseDto> create(@RequestBody @Valid ReminderRequestDto reminderRequestDto) {
         try {
@@ -101,7 +96,6 @@ public class ReminderControllerImpl implements ReminderController {
         }
     }
 
-    @Override
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         try {
@@ -116,7 +110,6 @@ public class ReminderControllerImpl implements ReminderController {
         }
     }
 
-    @Override
     @PutMapping("/{id}")
     public ResponseEntity<ReminderResponseDto> update(@PathVariable Long id,
                                                       @RequestBody @Valid ReminderRequestDto reminderRequestDto) {
@@ -131,7 +124,6 @@ public class ReminderControllerImpl implements ReminderController {
         }
     }
 
-    @Override
     @GetMapping("/")
     public ResponseEntity<List<ReminderResponseDto>> searchByCriteria(@RequestParam(value = "title", required = false) String title,
                                                                       @RequestParam(value = "description", required = false) String description,
