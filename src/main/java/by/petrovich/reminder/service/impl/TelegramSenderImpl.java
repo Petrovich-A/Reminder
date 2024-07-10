@@ -14,6 +14,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
+import java.time.LocalDateTime;
+
 import static org.springframework.http.HttpMethod.POST;
 
 @RequiredArgsConstructor
@@ -38,7 +40,7 @@ public class TelegramSenderImpl implements Sender {
         try {
             ResponseEntity<String> response = restTemplate.exchange(buildUrl(), POST, entity, String.class);
             if (response.getStatusCode().is2xxSuccessful()) {
-                logger.info("Message successfully sent to Telegram. Time: {}", System.currentTimeMillis());
+                logger.info("Message successfully sent to User: {} to telegram. Time: {}", user.getLogin(), LocalDateTime.now());
             } else {
                 logger.error("Error sending message to Telegram: Status Code - {}, Response Body - {}", response.getStatusCode(), response.getBody());
             }
