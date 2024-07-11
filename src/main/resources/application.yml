@@ -8,8 +8,8 @@ spring:
 
   datasource:
     url: jdbc:postgresql://localhost:5432/reminder
-    username: postgres
-    password: 123
+    username: ${DATASOURCE_USERNAME}
+    password: ${DATASOURCE_PASSWORD}
 
   jpa:
     hibernate:
@@ -24,8 +24,8 @@ spring:
     change-log: classpath:/db/changelog/changelog-master.yaml
 
   mail:
-    username:
-    password:
+    username: ${MAIL_USERNAME}
+    password: ${MAIL_PASSWORD}
     host: smtp.gmail.com
     port: 587
     properties:
@@ -42,7 +42,7 @@ spring:
 
 telegram:
   bot:
-    token: '7230385731:AAFPsBQ6mMNpQO9a7vH6iSOyjwkPYW901f4'
+    token: ${TELEGRAM_BOT_TOKEN}
   api:
     url: 'https://api.telegram.org/bot'
     command: '/sendMessage'
