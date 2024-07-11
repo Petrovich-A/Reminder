@@ -63,7 +63,7 @@ paths:
                 title: "titleCreate"
                 description: "descriptionCreate"
                 userId: 999
-                date: "2023-05-02T11:30:00"
+                date: "2024-05-02T11:30:00"
       responses:
         '201':
           description: Reminder created
@@ -170,7 +170,7 @@ paths:
                 title: "titleUpdate"
                 description: "descriptionUpdate"
                 userId: 999
-                date: "2023-05-02T11:30:00"
+                date: "2024-05-02T11:30:00"
       responses:
         '200':
           description: Reminder updated
@@ -203,7 +203,7 @@ components:
         title: "titleCreate"
         description: "descriptionCreate"
         userId: 999
-        date: "2023-05-02T11:30:00"
+        date: "2024-05-02T11:30:00"
 
     ReminderResponseDto:
       type: object
@@ -224,7 +224,7 @@ components:
         title: "title"
         description: "description"
         userId: 1
-        date: "2023-05-02T11:30:00"
+        date: "2024-05-02T11:30:00"
 
     PageReminderResponseDto:
       type: object
