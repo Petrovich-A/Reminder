@@ -1,8 +1,8 @@
-package by.petrovich.reminder.service;
+package by.petrovich.reminder.client;
 
 import by.petrovich.reminder.model.Reminder;
 import by.petrovich.reminder.model.User;
 
 public interface Sender {
-    void send(User user, Reminder reminder);
+    void sendMessage(User user, Reminder reminder);
 }
