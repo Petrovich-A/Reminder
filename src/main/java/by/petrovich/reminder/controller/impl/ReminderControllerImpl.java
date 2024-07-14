@@ -2,7 +2,6 @@ package by.petrovich.reminder.controller.impl;
 
 import by.petrovich.reminder.dto.request.ReminderRequestDto;
 import by.petrovich.reminder.dto.response.ReminderResponseDto;
-import by.petrovich.reminder.exception.ReminderNotFoundException;
 import by.petrovich.reminder.service.impl.ReminderServiceImpl;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -25,10 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
-import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.CREATED;
-import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
-import static org.springframework.http.HttpStatus.NOT_FOUND;
 import static org.springframework.http.HttpStatus.NO_CONTENT;
 import static org.springframework.http.HttpStatus.OK;
 
@@ -43,85 +39,44 @@ public class ReminderControllerImpl {
     public ResponseEntity<Page<ReminderResponseDto>> findAll(@RequestParam(name = "page", defaultValue = "0") int page,
                                                              @RequestParam(name = "size", defaultValue = "3") int size) {
         if (page < 0 || size <= 0) {
-            logger.error("Invalid page {} or size value: {}", page, size);
-            return ResponseEntity.status(BAD_REQUEST).build();
+            throw new IllegalArgumentException(String.format("Invalid page %d or size value: %d", page, size));
         }
-        try {
-            Pageable pageable = PageRequest.of(page, size);
-            return ResponseEntity.status(OK).body(reminderService.findAll(pageable));
-        } catch (Exception e) {
-            logger.error("Unexpected error occurred while finding all reminders", e);
-            return ResponseEntity.status(INTERNAL_SERVER_ERROR).build();
-        }
+        Pageable pageable = PageRequest.of(page, size);
+        return ResponseEntity.status(OK).body(reminderService.findAll(pageable));
     }
 
     @GetMapping("/sort")
     public ResponseEntity<List<ReminderResponseDto>> findAll(@RequestParam(defaultValue = "ASC") String sortDirection,
                                                              @RequestParam(defaultValue = "id") String sortBy) {
-        try {
-            Sort.Direction direction = sortDirection.equalsIgnoreCase("asc") ? Sort.Direction.ASC : Sort.Direction.DESC;
-            Sort sort = Sort.by(direction, sortBy);
-            return ResponseEntity.status(OK).body(reminderService.findAll(sort));
-        } catch (Exception e) {
-            logger.error("Unexpected error occurred while finding all reminders", e);
-            return ResponseEntity.status(INTERNAL_SERVER_ERROR).build();
-        }
+        Sort.Direction direction = sortDirection.equalsIgnoreCase("asc") ? Sort.Direction.ASC : Sort.Direction.DESC;
+        Sort sort = Sort.by(direction, sortBy);
+        return ResponseEntity.status(OK).body(reminderService.findAll(sort));
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<ReminderResponseDto> find(@PathVariable Long id) {
         if (id <= 0) {
-            logger.error("Invalid id supplied: {}", id);
-            return ResponseEntity.status(BAD_REQUEST).build();
+            throw new IllegalArgumentException("Invalid id supplied: " + id);
         }
-        try {
-            ReminderResponseDto reminderResponseDto = reminderService.find(id);
-            return ResponseEntity.status(OK).body(reminderResponseDto);
-        } catch (ReminderNotFoundException e) {
-            logger.error("Reminder not found with id: {}", id);
-            return ResponseEntity.status(NOT_FOUND).build();
-        } catch (Exception e) {
-            logger.error("Unexpected error occurred while finding reminder with id: {}", id, e);
-            return ResponseEntity.status(INTERNAL_SERVER_ERROR).build();
-        }
+        ReminderResponseDto reminderResponseDto = reminderService.find(id);
+        return ResponseEntity.status(OK).body(reminderResponseDto);
     }
 
     @PostMapping("/")
     public ResponseEntity<ReminderResponseDto> create(@RequestBody @Valid ReminderRequestDto reminderRequestDto) {
-        try {
-            return ResponseEntity.status(CREATED).body(reminderService.create(reminderRequestDto));
-        } catch (Exception e) {
-            logger.error("Error occurred while creating a reminder", e);
-            return ResponseEntity.status(BAD_REQUEST).build();
-        }
+        return ResponseEntity.status(CREATED).body(reminderService.create(reminderRequestDto));
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
-        try {
-            reminderService.delete(id);
-            return ResponseEntity.status(NO_CONTENT).build();
-        } catch (ReminderNotFoundException e) {
-            logger.error("Reminder not found with id: {}", id, e);
-            return ResponseEntity.status(NOT_FOUND).build();
-        } catch (Exception e) {
-            logger.error("Error occurred while deleting a reminder", e);
-            return ResponseEntity.status(BAD_REQUEST).build();
-        }
+        reminderService.delete(id);
+        return ResponseEntity.status(NO_CONTENT).build();
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<ReminderResponseDto> update(@PathVariable Long id,
                                                       @RequestBody @Valid ReminderRequestDto reminderRequestDto) {
-        try {
-            return ResponseEntity.status(OK).body(reminderService.update(id, reminderRequestDto));
-        } catch (ReminderNotFoundException e) {
-            logger.error("Reminder not found with id: {}", id, e);
-            return ResponseEntity.status(NOT_FOUND).build();
-        } catch (Exception e) {
-            logger.error("Error occurred while updating a reminder", e);
-            return ResponseEntity.status(BAD_REQUEST).build();
-        }
+        return ResponseEntity.status(OK).body(reminderService.update(id, reminderRequestDto));
     }
 
     @GetMapping("/")
@@ -135,7 +90,7 @@ public class ReminderControllerImpl {
         } else if (date != null) {
             return ResponseEntity.status(OK).body(reminderService.findByDate(date));
         } else {
-            return ResponseEntity.status(BAD_REQUEST).build();
+            throw new IllegalArgumentException("At least one search criteria must be provided");
         }
     }
 
