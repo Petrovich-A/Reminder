@@ -1,0 +1,97 @@
+package by.petrovich.reminder.controller.impl;
+
+import by.petrovich.reminder.dto.request.ReminderRequestDto;
+import by.petrovich.reminder.dto.response.ReminderResponseDto;
+import by.petrovich.reminder.service.impl.ReminderServiceImpl;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
+
+import static org.springframework.http.HttpStatus.CREATED;
+import static org.springframework.http.HttpStatus.NO_CONTENT;
+import static org.springframework.http.HttpStatus.OK;
+
+@RestController
+@RequestMapping("/api/v1/reminders")
+@RequiredArgsConstructor
+public class ReminderControllerImpl {
+    private static final Logger logger = LoggerFactory.getLogger(ReminderControllerImpl.class);
+    private final ReminderServiceImpl reminderService;
+
+    @GetMapping
+    public ResponseEntity<Page<ReminderResponseDto>> findAll(@RequestParam(name = "page", defaultValue = "0") int page,
+                                                             @RequestParam(name = "size", defaultValue = "3") int size) {
+        if (page < 0 || size <= 0) {
+            throw new IllegalArgumentException(String.format("Invalid page %d or size value: %d", page, size));
+        }
+        Pageable pageable = PageRequest.of(page, size);
+        return ResponseEntity.status(OK).body(reminderService.findAll(pageable));
+    }
+
+    @GetMapping("/sort")
+    public ResponseEntity<List<ReminderResponseDto>> findAll(@RequestParam(defaultValue = "ASC") String sortDirection,
+                                                             @RequestParam(defaultValue = "id") String sortBy) {
+        Sort.Direction direction = sortDirection.equalsIgnoreCase("asc") ? Sort.Direction.ASC : Sort.Direction.DESC;
+        Sort sort = Sort.by(direction, sortBy);
+        return ResponseEntity.status(OK).body(reminderService.findAll(sort));
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<ReminderResponseDto> find(@PathVariable Long id) {
+        if (id <= 0) {
+            throw new IllegalArgumentException("Invalid id supplied: " + id);
+        }
+        ReminderResponseDto reminderResponseDto = reminderService.find(id);
+        return ResponseEntity.status(OK).body(reminderResponseDto);
+    }
+
+    @PostMapping("/")
+    public ResponseEntity<ReminderResponseDto> create(@RequestBody @Valid ReminderRequestDto reminderRequestDto) {
+        return ResponseEntity.status(CREATED).body(reminderService.create(reminderRequestDto));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
+        reminderService.delete(id);
+        return ResponseEntity.status(NO_CONTENT).build();
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<ReminderResponseDto> update(@PathVariable Long id,
+                                                      @RequestBody @Valid ReminderRequestDto reminderRequestDto) {
+        return ResponseEntity.status(OK).body(reminderService.update(id, reminderRequestDto));
+    }
+
+    @GetMapping("/")
+    public ResponseEntity<List<ReminderResponseDto>> searchByCriteria(@RequestParam(value = "title", required = false) String title,
+                                                                      @RequestParam(value = "description", required = false) String description,
+                                                                      @RequestParam(value = "date", required = false) String date) {
+        if (title != null) {
+            return ResponseEntity.status(OK).body(reminderService.findByTitle(title));
+        } else if (description != null) {
+            return ResponseEntity.status(OK).body(reminderService.findByDescription(description));
+        } else if (date != null) {
+            return ResponseEntity.status(OK).body(reminderService.findByDate(date));
+        } else {
+            throw new IllegalArgumentException("At least one search criteria must be provided");
+        }
+    }
+
+}

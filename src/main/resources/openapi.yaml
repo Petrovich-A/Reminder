@@ -1,0 +1,255 @@
+openapi: 3.0.3
+info:
+  version: 1.0.1
+  title: Reminder API
+  contact:
+    name: Alexandr Petrovich
+    url: 'https://reminder.com'
+    email: a.piatrovich@gmail.com
+  license:
+    name: Apache 2.0
+    url: 'https://www.apache.org/licenses/LICENSE-2.0.html'
+  description: >
+    This API manages reminders for users. It allows creation and retrieval of reminders
+    associated with specific users. Reminders can be scheduled for future dates and times.
+    The API supports operations to create reminders and retrieve details of existing reminders.
+tags:
+  - name: Reminder
+    description: API for managing reminders
+
+paths:
+  /api/v1/reminders:
+    get:
+      summary: Find all reminders with pagination
+      tags:
+        - Reminder
+      parameters:
+        - in: query
+          name: page
+          description: Page number to be displayed
+          schema:
+            type: integer
+            default: 0
+            example: 1
+        - in: query
+          name: size
+          description: Number of reminders to be displayed on the page
+          schema:
+            type: integer
+            default: 3
+            example: 4
+      responses:
+        '200':
+          description: Found paginated reminders
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PageReminderResponseDto'
+        '400':
+          description: Invalid size or page value
+        '500':
+          description: Internal server error
+    post:
+      summary: Create a new reminder
+      tags:
+        - Reminder
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReminderRequestDto'
+              example:
+                title: "titleCreate"
+                description: "descriptionCreate"
+                userId: 999
+                date: "2024-05-02T11:30:00"
+      responses:
+        '201':
+          description: Reminder created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReminderResponseDto'
+        '400':
+          description: Invalid input
+  /api/v1/reminders/sort:
+    get:
+      summary: Find all reminders with sorting
+      tags:
+        - Reminder
+      parameters:
+        - in: query
+          name: sortDirection
+          description: Direction of sorting
+          schema:
+            type: string
+            default: ASC
+            enum:
+              - ASC
+              - DESC
+            example: ASC
+        - in: query
+          name: sortBy
+          description: Field by which to sort the reminders
+          schema:
+            type: string
+            default: id
+            example: title
+      responses:
+        '200':
+          description: Found all reminders with sorting
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ReminderResponseDto'
+        '500':
+          description: Internal server error
+  /api/v1/reminders/{id}:
+    get:
+      summary: Find a reminder by its id
+      tags:
+        - Reminder
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: ID of reminder to be searched
+          schema:
+            type: integer
+            example: 1
+      responses:
+        '200':
+          description: Found the reminder
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReminderResponseDto'
+        '400':
+          description: Invalid id supplied
+        '404':
+          description: Reminder not found
+    delete:
+      summary: Delete a reminder by its id
+      tags:
+        - Reminder
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: ID of reminder to be deleted
+          schema:
+            type: integer
+            example: 999
+      responses:
+        '204':
+          description: Reminder deleted
+        '404':
+          description: Reminder not found
+    put:
+      summary: Update a reminder by its id
+      tags:
+        - Reminder
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: ID of reminder to be updated
+          schema:
+            type: integer
+            example: 999
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReminderRequestDto'
+              example:
+                title: "titleUpdate"
+                description: "descriptionUpdate"
+                userId: 999
+                date: "2024-05-02T11:30:00"
+      responses:
+        '200':
+          description: Reminder updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReminderResponseDto'
+        '404':
+          description: Reminder not found
+
+components:
+  schemas:
+    ReminderRequestDto:
+      type: object
+      properties:
+        title:
+          type: string
+        description:
+          type: string
+        userId:
+          type: integer
+        date:
+          type: string
+          format: date-time
+      required:
+        - title
+        - description
+        - userId
+      example:
+        title: "titleCreate"
+        description: "descriptionCreate"
+        userId: 999
+        date: "2024-05-02T11:30:00"
+
+    ReminderResponseDto:
+      type: object
+      properties:
+        id:
+          type: integer
+        title:
+          type: string
+        description:
+          type: string
+        userId:
+          type: integer
+        date:
+          type: string
+          format: date-time
+      example:
+        id: 1
+        title: "title"
+        description: "description"
+        userId: 1
+        date: "2024-05-02T11:30:00"
+
+    PageReminderResponseDto:
+      type: object
+      properties:
+        content:
+          type: array
+          items:
+            $ref: '#/components/schemas/ReminderResponseDto'
+        pageable:
+          type: object
+        totalPages:
+          type: integer
+        totalElements:
+          type: integer
+        last:
+          type: boolean
+        size:
+          type: integer
+        number:
+          type: integer
+        sort:
+          type: object
+        numberOfElements:
+          type: integer
+        first:
+          type: boolean
+        empty:
+          type: boolean

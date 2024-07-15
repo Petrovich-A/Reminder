@@ -1,0 +1,9 @@
+databaseChangeLog:
+  - include:
+      file: db/changelog/changeset/001__CreateUsersTable.sql
+  - include:
+      file: db/changelog/changeset/002__InsertToUserTable.sql
+  - include:
+      file: db/changelog/changeset/003__CreateRemindersTable.sql
+  - include:
+      file: db/changelog/changeset/004__InsertToReminderTable.sql
