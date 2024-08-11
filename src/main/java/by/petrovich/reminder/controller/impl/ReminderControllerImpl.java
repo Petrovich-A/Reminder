@@ -4,9 +4,8 @@ import by.petrovich.reminder.dto.request.ReminderRequestDto;
 import by.petrovich.reminder.dto.response.ReminderResponseDto;
 import by.petrovich.reminder.service.impl.ReminderServiceImpl;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -32,15 +31,11 @@ import static org.springframework.http.HttpStatus.OK;
 @RequestMapping("/api/v1/reminders")
 @RequiredArgsConstructor
 public class ReminderControllerImpl {
-    private static final Logger logger = LoggerFactory.getLogger(ReminderControllerImpl.class);
     private final ReminderServiceImpl reminderService;
 
     @GetMapping
-    public ResponseEntity<Page<ReminderResponseDto>> findAll(@RequestParam(name = "page", defaultValue = "0") int page,
-                                                             @RequestParam(name = "size", defaultValue = "3") int size) {
-        if (page < 0 || size <= 0) {
-            throw new IllegalArgumentException(String.format("Invalid page %d or size value: %d", page, size));
-        }
+    public ResponseEntity<Page<ReminderResponseDto>> findAll(@RequestParam(name = "page", defaultValue = "0") @Min(0) int page,
+                                                             @RequestParam(name = "size", defaultValue = "1") @Min(0) int size) {
         Pageable pageable = PageRequest.of(page, size);
         return ResponseEntity.status(OK).body(reminderService.findAll(pageable));
     }
@@ -54,10 +49,7 @@ public class ReminderControllerImpl {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ReminderResponseDto> find(@PathVariable Long id) {
-        if (id <= 0) {
-            throw new IllegalArgumentException("Invalid id supplied: " + id);
-        }
+    public ResponseEntity<ReminderResponseDto> find(@PathVariable @Min(1) Long id) {
         ReminderResponseDto reminderResponseDto = reminderService.find(id);
         return ResponseEntity.status(OK).body(reminderResponseDto);
     }
@@ -68,13 +60,13 @@ public class ReminderControllerImpl {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
+    public ResponseEntity<Void> delete(@PathVariable @Min(1) Long id) {
         reminderService.delete(id);
         return ResponseEntity.status(NO_CONTENT).build();
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ReminderResponseDto> update(@PathVariable Long id,
+    public ResponseEntity<ReminderResponseDto> update(@PathVariable @Min(1) Long id,
                                                       @RequestBody @Valid ReminderRequestDto reminderRequestDto) {
         return ResponseEntity.status(OK).body(reminderService.update(id, reminderRequestDto));
     }
