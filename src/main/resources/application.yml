@@ -35,10 +35,10 @@ spring:
           starttls:
             enable: true
 
-#springdoc:
-#  api-docs:
-#    path: /api-docs.html
-#    enabled: false
+springdoc:
+  swagger-ui:
+    disable-swagger-default-url: true
+    path: /reminder
 
 telegram:
   bot:
@@ -48,4 +48,4 @@ telegram:
     command: '/sendMessage'
 
 scheduling:
-  interval: 60000
+  interval: 180000
