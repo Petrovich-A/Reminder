@@ -1,23 +1,26 @@
 package by.petrovich.reminder.config;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import org.springdoc.core.models.GroupedOpenApi;
-import org.springdoc.core.utils.SpringDocUtils;
+import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.info.Contact;
+import io.swagger.v3.oas.models.info.Info;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
+@Configuration
 public class OpenApiConfig implements WebMvcConfigurer {
 
-    static {
-        SpringDocUtils.getConfig()
-                .addAnnotationsToIgnore(JsonIgnore.class);
+    @Bean
+    public OpenAPI customOpenAPI() {
+        return new OpenAPI()
+                .info(new Info()
+                        .title("Reminder API")
+                        .version("1.0.1")
+                        .description("This API manages reminders for users.")
+                        .contact(new Contact().name("Alexandr Petrovich")
+                                .url("https://reminder.com")
+                                .email("a.piatrovich@gmail.com"))
+                );
     }
 
-    @Bean
-    public GroupedOpenApi customOpenApi() {
-        return GroupedOpenApi.builder()
-                .group("api")
-                .pathsToMatch("/api/**")
-                .build();
-    }
 }
