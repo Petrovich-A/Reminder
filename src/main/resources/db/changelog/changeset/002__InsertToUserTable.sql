@@ -4,7 +4,7 @@ VALUES (nextval('user_id_seq'), 'Alex', 'secure123', 'a.piatrovich@gmail.com', '
 
 -- 2
 INSERT INTO public.users (id, login, password, email, chat_id)
-VALUES (nextval('user_id_seq'), 'Pavel', 'Pa$$w0rd', 'frizpk@gmail.com', '6967735001');
+VALUES (nextval('user_id_seq'), 'Pavel', 'Pa$$w0rd', 'dmitry2020@gmail.com', '6967735001');
 
 -- 3
 INSERT INTO public.users (id, login, password, email, chat_id)

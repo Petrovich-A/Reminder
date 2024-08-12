@@ -1,6 +1,5 @@
 package by.petrovich.reminder.model;
 
-import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -26,7 +25,6 @@ public class User {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "user_seq")
     @SequenceGenerator(name = "user_seq", sequenceName = "user_id_seq", allocationSize = 10)
     @Column(nullable = false, columnDefinition = "bigint")
-    @Schema(description = "Unique identifier of the reminder", example = "1")
     @NotNull
     private Long id;
 

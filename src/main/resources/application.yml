@@ -36,9 +36,9 @@ spring:
             enable: true
 
 springdoc:
-  swagger-ui:
-    disable-swagger-default-url: true
-    path: /reminder
+  api-docs:
+    enabled: true
+    path: /openapi.yaml
 
 telegram:
   bot:
