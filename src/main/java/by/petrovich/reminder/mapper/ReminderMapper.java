@@ -11,11 +11,11 @@ public interface ReminderMapper {
     ReminderResponseDto toResponseDto(Reminder reminder);
 
     @Mapping(target = "id", ignore = true)
-//    @Mapping(target = "user")
+    @Mapping(target = "user", ignore = true)
     Reminder toEntity(ReminderRequestDto reminderRequestDto);
 
     @Mapping(target = "id", ignore = true)
-//    @Mapping(target = "user")
+    @Mapping(target = "user", ignore = true)
     Reminder toEntityUpdate(ReminderRequestDto reminderRequestDto, @MappingTarget Reminder reminder);
 
 }
