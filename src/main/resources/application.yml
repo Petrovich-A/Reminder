@@ -1,13 +1,17 @@
+logging:
+  level:
+    org.springframework: DEBUG
+    org.hibernate: DEBUG
 spring:
   application:
     name: reminder
 
   docker:
     compose:
-      enabled: false
+      enabled: true
 
   datasource:
-    url: jdbc:postgresql://localhost:5432/reminder
+    url: jdbc:postgresql://database-reminder:5432/reminder
     username: ${DATASOURCE_USERNAME}
     password: ${DATASOURCE_PASSWORD}
 
