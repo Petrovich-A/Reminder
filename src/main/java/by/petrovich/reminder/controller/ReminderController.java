@@ -1,4 +1,4 @@
-package by.petrovich.reminder.controller.impl;
+package by.petrovich.reminder.controller;
 
 import by.petrovich.reminder.dto.request.ReminderRequestDto;
 import by.petrovich.reminder.dto.response.ReminderResponseDto;
@@ -30,7 +30,7 @@ import static org.springframework.http.HttpStatus.OK;
 @RestController
 @RequestMapping("/api/v1/reminders")
 @RequiredArgsConstructor
-public class ReminderControllerImpl {
+public class ReminderController {
     private final ReminderServiceImpl reminderService;
 
     @GetMapping

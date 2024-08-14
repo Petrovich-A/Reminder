@@ -1,0 +1,13 @@
+logging:
+  level:
+    org.springframework: DEBUG
+    org.hibernate: DEBUG
+    liquibase: DEBUG
+
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/remindertestdb
+    username: postgres
+    password: password
+  liquibase:
+    change-log: classpath:db/changelog/db.changelog-master.xml
