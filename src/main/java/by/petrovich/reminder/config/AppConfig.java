@@ -28,16 +28,6 @@ public class AppConfig {
     private String datasourcePassword;
 
     @Bean
-    public DataSource dataSource() {
-        DriverManagerDataSource dataSource = new DriverManagerDataSource();
-        dataSource.setDriverClassName("org.postgresql.Driver");
-        dataSource.setUrl("jdbc:postgresql://localhost:5432/reminder");
-        dataSource.setUsername(datasourceUsername);
-        dataSource.setPassword(datasourcePassword);
-        return dataSource;
-    }
-
-    @Bean
     public SpringLiquibase liquibase(DataSource dataSource) {
         SpringLiquibase liquibase = new SpringLiquibase();
         liquibase.setChangeLog("classpath:db/changelog/changelog-master.yaml");

@@ -60,9 +60,9 @@ public class ReminderController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable @Min(1) Long id) {
+    public ResponseEntity<String> delete(@PathVariable @Min(1) Long id) {
         reminderService.delete(id);
-        return ResponseEntity.status(NO_CONTENT).build();
+        return ResponseEntity.status(NO_CONTENT).body("Reminder deleted");
     }
 
     @PutMapping("/{id}")
