@@ -1,6 +1,5 @@
 package by.petrovich.reminder.service.impl;
 
-import by.petrovich.reminder.constant.Constant;
 import by.petrovich.reminder.dto.request.ReminderRequestDto;
 import by.petrovich.reminder.dto.response.ReminderResponseDto;
 import by.petrovich.reminder.exception.ReminderNotFoundException;
@@ -46,7 +45,7 @@ public class ReminderServiceImpl implements ReminderService {
     @Override
     public ReminderResponseDto find(Long id) throws ReminderNotFoundException {
         return reminderMapper.toResponseDto(reminderRepository.findById(id)
-                .orElseThrow(() -> new ReminderNotFoundException("Reminder not found")));
+                .orElseThrow(() -> new ReminderNotFoundException("Reminder with id " + id + " not found")));
     }
 
     @Override
