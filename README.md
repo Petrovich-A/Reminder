@@ -67,51 +67,12 @@ The application code is covered by comprehensive unit and integration tests to e
 <details>
   <summary>Tech Stack</summary>
   <ul>
-    <li>
-      <a href="https://spring.io/projects/spring-boot">
-        <img src="https://spring.io/images/branding/spring-logo-vertical.svg" alt="Spring Boot" width="100" />
-      </a>
-    </li>
-    <li>
-      <a href="https://www.postgresql.org/">
-        <img src="https://www.postgresql.org/media/img/about/press/elephant.svg" alt="PostgreSQL" width="100" />
-      </a>
-    </li>
-    <li>
-      <a href="https://www.liquibase.org/">
-        <img src="https://www.liquibase.org/images/liquibase-logo.svg" alt="Liquibase" width="100" />
-      </a>
-    </li>
-    <li>
-      <a href="https://hibernate.org/">
-        <img src="https://hibernate.org/images/hibernate-logo.svg" alt="Hibernate" width="100" />
-      </a>
-    </li>
-    <li>
-      <a href="https://spring.io/projects/spring-security">
-        <img src="https://spring.io/images/branding/spring-logo-vertical.svg" alt="Spring Security OAuth2" width="100" />
-      </a>
-    </li>
-    <li>
-      <a href="https://docs.gradle.org/">
-        <img src="https://docs.gradle.org/images/gradle-logo.png" alt="Gradle" width="100" />
-      </a>
-    </li>
-    <li>
-      <a href="https://www.quartz-scheduler.org/">
-        <img src="https://www.quartz-scheduler.org/images/quartz-logo.svg" alt="Quartz" width="100" />
-      </a>
-    </li>
-    <li>
-      <a href="https://www.testcontainers.org/">
-        <img src="https://www.testcontainers.org/images/testcontainers-logo.png" alt="Testcontainers" width="100" />
-      </a>
-    </li>
-    <li>
-      <a href="https://docs.docker.com/">
-        <img src="https://www.docker.com/sites/default/files/d8/2019-07/vertical-logo-monochromatic.png" alt="Docker" width="100" />
-      </a>
-    </li>
+    <li><a href="https://spring.io/projects/spring-boot"><img src="https://www.vectorlogo.zone/logos/springio/springio-ar21.svg" alt="Spring Boot" height="50"></a></li>
+    <li><a href="https://www.postgresql.org/"><img src="https://www.vectorlogo.zone/logos/postgresql/postgresql-ar21.svg" alt="PostgreSQL" height="50"></a></li>
+    <li><a href="https://logowik.com/liquibase-logo-vector-svg-pdf-ai-eps-cdr-free-download-16952.html"><img src="https://logowik.com/content/uploads/images/liquibase4004.jpg" alt="Liquibase" height="65"></a></li>
+    <li><a href="https://hibernate.org/"><img src="https://www.vectorlogo.zone/logos/hibernate/hibernate-ar21.svg" alt="Hibernate" height="50"></a></li>
+    <li><a href="https://docs.gradle.org/"><img src="https://www.vectorlogo.zone/logos/gradle/gradle-ar21.svg" alt="Gradle" height="50"></a></li>
+    <li><a href="https://docs.docker.com/"><img src="https://www.vectorlogo.zone/logos/docker/docker-ar21.svg" alt="Docker" height="50"></a></li>
   </ul>
 </details>
 
