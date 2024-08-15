@@ -5,12 +5,14 @@ import by.petrovich.reminder.dto.response.ReminderResponseDto;
 import by.petrovich.reminder.service.impl.ReminderServiceImpl;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -30,6 +32,7 @@ import static org.springframework.http.HttpStatus.OK;
 @RestController
 @RequestMapping("/api/v1/reminders")
 @RequiredArgsConstructor
+@Validated
 public class ReminderController {
     private final ReminderServiceImpl reminderService;
 
@@ -49,7 +52,7 @@ public class ReminderController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ReminderResponseDto> find(@PathVariable @Min(1) Long id) {
+    public ResponseEntity<ReminderResponseDto> find(@PathVariable @Positive Long id) {
         ReminderResponseDto reminderResponseDto = reminderService.find(id);
         return ResponseEntity.status(OK).body(reminderResponseDto);
     }
@@ -60,13 +63,13 @@ public class ReminderController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> delete(@PathVariable @Min(1) Long id) {
+    public ResponseEntity<String> delete(@PathVariable @Positive Long id) {
         reminderService.delete(id);
         return ResponseEntity.status(NO_CONTENT).body("Reminder deleted");
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ReminderResponseDto> update(@PathVariable @Min(1) Long id,
+    public ResponseEntity<ReminderResponseDto> update(@PathVariable @Positive Long id,
                                                       @RequestBody @Valid ReminderRequestDto reminderRequestDto) {
         return ResponseEntity.status(OK).body(reminderService.update(id, reminderRequestDto));
     }
