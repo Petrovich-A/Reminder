@@ -1,6 +1,6 @@
 package by.petrovich.reminder.interceptor;
 
-import by.petrovich.reminder.controller.impl.ReminderControllerImpl;
+import by.petrovich.reminder.controller.ReminderController;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
@@ -17,7 +17,7 @@ import static jakarta.servlet.http.HttpServletResponse.SC_BAD_REQUEST;
 
 @Component
 public class ReminderValidationInterceptor implements HandlerInterceptor {
-    private static final Logger logger = LoggerFactory.getLogger(ReminderControllerImpl.class);
+    private static final Logger logger = LoggerFactory.getLogger(ReminderController.class);
 
     @Override
     public boolean preHandle(HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull Object handler) throws Exception {

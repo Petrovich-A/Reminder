@@ -1,10 +1,11 @@
 CREATE TABLE users
 (
-    id       BIGINT       NOT NULL,
-    login    VARCHAR(50)  NOT NULL,
-    password VARCHAR(100) NOT NULL,
-    email    VARCHAR(50)  NOT NULL,
-    chat_id  VARCHAR(10)   NOT NULL,
+    id              BIGINT       NOT NULL,
+    login           VARCHAR(50)  NOT NULL,
+    password        VARCHAR(100) NOT NULL,
+    email           VARCHAR(50)  NOT NULL,
+    chat_id         VARCHAR(10)  NOT NULL,
+    o_auth_provider VARCHAR(15)  NOT NULL,
     PRIMARY KEY (id)
 );
 

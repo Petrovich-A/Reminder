@@ -5,7 +5,6 @@ import liquibase.integration.spring.SpringLiquibase;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.jdbc.datasource.DriverManagerDataSource;
 
 import javax.sql.DataSource;
 
@@ -19,6 +18,8 @@ public class AppConfig {
         System.setProperty("MAIL_USERNAME", dotenv.get("MAIL_USERNAME"));
         System.setProperty("MAIL_PASSWORD", dotenv.get("MAIL_PASSWORD"));
         System.setProperty("TELEGRAM_BOT_TOKEN", dotenv.get("TELEGRAM_BOT_TOKEN"));
+        System.setProperty("CLIENT_ID", dotenv.get("CLIENT_ID"));
+        System.setProperty("CLIENT_SECRET", dotenv.get("CLIENT_SECRET"));
     }
 
     @Value("${DATASOURCE_USERNAME}")

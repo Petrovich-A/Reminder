@@ -12,13 +12,13 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
-import lombok.RequiredArgsConstructor;
+import lombok.NoArgsConstructor;
 
 import java.util.Set;
 
 @Entity
 @Data
-@RequiredArgsConstructor
+@NoArgsConstructor
 @Table(name = "users")
 public class User {
     @Id
@@ -49,10 +49,19 @@ public class User {
     @Size(min = 9, max = 10)
     private String chatId;
 
+    @Column(name = "o_auth_provider", nullable = false)
+    @NotNull
+    @Size(min = 3, max = 15)
+    private String oAuthProvider;
+
     @OneToMany(mappedBy = "user")
     private Set<Reminder> reminders;
 
-    public User(String s) {
-        this.chatId = s;
+    public User(String login, String password, String email, String chatId, String oAuthProvider) {
+        this.login = login;
+        this.password = password;
+        this.email = email;
+        this.chatId = chatId;
+        this.oAuthProvider = oAuthProvider;
     }
 }
