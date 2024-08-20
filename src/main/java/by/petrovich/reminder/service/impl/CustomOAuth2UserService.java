@@ -1,5 +1,6 @@
 package by.petrovich.reminder.service.impl;
 
+import by.petrovich.reminder.client.impl.EmailClientImpl;
 import by.petrovich.reminder.model.User;
 import by.petrovich.reminder.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequest, OAuth2User> {
     private final UserRepository userRepository;
+    private final EmailClientImpl emailClient;
 
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
@@ -26,8 +28,12 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
 
         User user = userRepository.findByEmail(email)
                 .map(existingUser -> updateExistingUser(existingUser, name, oAuthProvider))
-                .orElseGet(() -> createNewUser(name, email, oAuthProvider));
-
+                .orElseGet(() -> {
+                    User newUser = createNewUser(name, email, oAuthProvider);
+                    User savedUser = userRepository.save(newUser);
+                    emailClient.sendRegistrationMessage(savedUser);
+                    return savedUser;
+                });
         userRepository.save(user);
         return oAuth2User;
     }
