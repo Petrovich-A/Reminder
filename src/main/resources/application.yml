@@ -68,9 +68,32 @@ springdoc:
 telegram:
   bot:
     token: ${TELEGRAM_BOT_TOKEN}
+    link: "https://t.me/ReminderJavaBot"
   api:
     url: 'https://api.telegram.org/bot'
     command: '/sendMessage'
 
 scheduling:
-  interval: 180000
+  interval: 18000000
+
+reminder:
+  email:
+    registration:
+      subject: "Welcome to Reminder App!"
+      text: |
+        Dear USER_NAME,
+        
+        Welcome to Reminder App!
+        
+        We are excited to have you on board. With Reminder App, you can easily manage your reminders, including creating, editing, and deleting them, as well as searching, sorting, and filtering through your list of reminders.
+        
+        To get started, please visit the following link to connect with our Telegram bot. The bot will help you manage your reminders and receive notifications directly in Telegram:
+        
+        [Connect with Telegram Bot](LINK_TO_TELEGRAM_BOT_WITH_ENCRYPTED_USER_ID)
+        
+        Make sure to check your profile settings to configure your email and Telegram contact details for notifications.
+        
+        If you have any questions or need assistance, feel free to reach out to our support team.
+        
+        Best regards,
+        The Reminder App Team
