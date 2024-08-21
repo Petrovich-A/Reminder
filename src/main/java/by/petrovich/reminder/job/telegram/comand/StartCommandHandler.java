@@ -25,7 +25,7 @@ public class StartCommandHandler implements CommandHandler {
         if (parts.length > 1) {
             try {
                 Long userTelegramId = message.from().id();
-                long userId = Long.parseLong(parts[1]);
+                int userId = Integer.parseInt(parts[1]);
                 logger.info("Received data from Telegram: userId: {}, userTelegramId: {}", userId, userTelegramId);
                 userService.partialUpdate(userId, userTelegramId);
             } catch (NumberFormatException e) {

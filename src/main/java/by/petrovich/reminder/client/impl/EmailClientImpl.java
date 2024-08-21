@@ -32,14 +32,14 @@ public class EmailClientImpl implements Sender {
     private final JavaMailSender javaMailSender;
 
     @Override
-    public void sendMessage(User user, Reminder reminder) {
+    public void sendMessage(Reminder reminder) {
         try {
-            SimpleMailMessage simpleMailMessage = buildMailMessage(user.getEmail(), reminder.getTitle(), reminder.getDescription());
+            SimpleMailMessage simpleMailMessage = buildMailMessage(reminder.getUser().getEmail(), reminder.getTitle(), reminder.getDescription());
             javaMailSender.send(simpleMailMessage);
         } catch (MailException e) {
-            logger.error("Error sending email to User: {}. Time: {}", user.getLogin(), LocalDateTime.now(), e);
+            logger.error("Error sending email to User: {}. Time: {}", reminder.getUser().getName(), LocalDateTime.now(), e);
         }
-        logger.info("Message successfully sent to User: {} via email. Time: {}", user.getLogin(), LocalDateTime.now());
+        logger.info("Message successfully sent to User: {} via email. Time: {}", reminder.getUser().getName(), LocalDateTime.now());
     }
 
 
@@ -49,9 +49,9 @@ public class EmailClientImpl implements Sender {
             SimpleMailMessage simpleMailMessage = buildMailMessage(user.getEmail(), registrationSubject, prepareRegistrationText);
             javaMailSender.send(simpleMailMessage);
         } catch (MailException e) {
-            logger.error("Error sending email to User: {}. Time: {}", user.getLogin(), LocalDateTime.now(), e);
+            logger.error("Error sending email to User: {}. Time: {}", user.getName(), LocalDateTime.now(), e);
         }
-        logger.info("Message successfully sent to User: {} via email. Time: {}", user.getLogin(), LocalDateTime.now());
+        logger.info("Message successfully sent to User: {} via email. Time: {}", user.getName(), LocalDateTime.now());
     }
 
     private String buildTelegramLink(Long userId) {
@@ -65,7 +65,7 @@ public class EmailClientImpl implements Sender {
     private String prepareRegistrationText(User user) {
         String link = buildTelegramLink(user.getId());
         return registrationText
-                .replace("USER_NAME", user.getLogin())
+                .replace("USER_NAME", user.getName())
                 .replace("LINK_TO_TELEGRAM_BOT_WITH_ENCRYPTED_USER_ID", link);
     }
 

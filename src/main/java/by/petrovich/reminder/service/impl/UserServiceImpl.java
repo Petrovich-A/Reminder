@@ -13,12 +13,12 @@ import java.util.Optional;
 public class UserServiceImpl {
     private final UserRepository userRepository;
 
-    public void partialUpdate(long userId, long userTelegramId) {
+    public void partialUpdate(long userId, Long userTelegramId) {
         Optional<User> optionalUser = userRepository.findById(userId);
         if (optionalUser.isEmpty()) {
             throw new ReminderNotFoundException("User not found");
         } else {
-            optionalUser.get().setChatId(String.valueOf(userTelegramId));
+            optionalUser.get().setTelegramUserId(userTelegramId);
             userRepository.save(optionalUser.get());
         }
     }

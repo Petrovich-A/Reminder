@@ -31,7 +31,7 @@ public class User {
     @Column(nullable = false)
     @NotNull
     @Size(max = 50)
-    private String login;
+    private String name;
 
     @Column(nullable = false)
     @NotNull
@@ -44,10 +44,10 @@ public class User {
     @Size(max = 50)
     private String email;
 
-    @Column(name = "chat_id", nullable = false)
+    @Column(name = "telegram_user_id", nullable = false)
     @NotNull
-    @Size(min = 9, max = 10)
-    private String chatId;
+    @Size(min = 1, max = 10)
+    private Long telegramUserId;
 
     @Column(name = "o_auth_provider", nullable = false)
     @NotNull
@@ -57,11 +57,4 @@ public class User {
     @OneToMany(mappedBy = "user")
     private Set<Reminder> reminders;
 
-    public User(String login, String password, String email, String chatId, String oAuthProvider) {
-        this.login = login;
-        this.password = password;
-        this.email = email;
-        this.chatId = chatId;
-        this.oAuthProvider = oAuthProvider;
-    }
 }

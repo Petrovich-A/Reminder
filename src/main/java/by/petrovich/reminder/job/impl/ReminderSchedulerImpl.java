@@ -1,10 +1,9 @@
 package by.petrovich.reminder.job.impl;
 
+import by.petrovich.reminder.client.Sender;
 import by.petrovich.reminder.job.ReminderScheduler;
 import by.petrovich.reminder.model.Reminder;
-import by.petrovich.reminder.model.User;
 import by.petrovich.reminder.repository.ReminderRepository;
-import by.petrovich.reminder.client.Sender;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -42,10 +41,9 @@ public class ReminderSchedulerImpl implements ReminderScheduler {
 
     private void sendReminders(Sender sender) {
         List<Reminder> remindersToSend = reminderRepository.findRemindersByRemindBefore(LocalDateTime.now());
-        for (Reminder reminder : remindersToSend) {
-            User user = reminder.getUser();
-            sender.sendMessage(user, reminder);
-        }
+        remindersToSend.stream()
+                .filter(reminder -> reminder.getUser().getTelegramUserId() != 0)
+                .forEach(sender::sendMessage);
     }
 
 }

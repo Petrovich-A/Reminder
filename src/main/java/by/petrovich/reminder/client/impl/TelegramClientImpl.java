@@ -2,11 +2,10 @@ package by.petrovich.reminder.client.impl;
 
 import by.petrovich.reminder.client.Sender;
 import by.petrovich.reminder.model.Reminder;
-import by.petrovich.reminder.model.User;
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
@@ -30,43 +29,49 @@ public class TelegramClientImpl implements Sender {
     private String botToken;
 
     @Value("${telegram.api.url}")
-    private String getTelegramApiUrl;
+    private String telegramApiUrl;
 
     @Value("${telegram.api.command}")
-    private String getTelegramApiCommand;
+    private String telegramApiCommand;
 
-    private final String TELEGRAM_API_URL;
+    private String TELEGRAM_API_URL;
+    private static final String CHAT_ID_BODY_ELEMENT = "chat_id";
 
-    @Autowired
-    public TelegramClientImpl(@Value("${telegram.bot.token}") String botToken,
-                              @Value("${telegram.api.url}") String getTelegramApiUrl,
-                              @Value("${telegram.api.command}") String getTelegramApiCommand) {
-        this.botToken = botToken;
-        this.getTelegramApiUrl = getTelegramApiUrl;
-        this.getTelegramApiCommand = getTelegramApiCommand;
-        this.TELEGRAM_API_URL = String.format("%s%s%s", getTelegramApiUrl, botToken, getTelegramApiCommand);
+    @PostConstruct
+    public void init() {
+        TELEGRAM_API_URL = String.format("%s%s%s", telegramApiUrl, botToken, telegramApiCommand);
     }
 
     @Override
-    public void sendMessage(User user, Reminder reminder) {
-        HttpEntity<String> entity = new HttpEntity<>(buildRequestBody(user, reminder), buildHeader());
+    public void sendMessage(Reminder reminder) {
+        HttpEntity<String> entity = new HttpEntity<>(buildRequestBody(reminder), buildHeader());
         RestTemplate restTemplate = new RestTemplate();
         try {
             ResponseEntity<String> response = restTemplate.exchange(TELEGRAM_API_URL, POST, entity, String.class);
             if (response.getStatusCode().is2xxSuccessful()) {
-                logger.info("Message successfully sent to User: {} via telegram. Time: {}", user.getLogin(), LocalDateTime.now());
+                logger.info("Message successfully sent to User: {} via telegram. Time: {}", reminder.getUser().getName(), LocalDateTime.now());
             } else {
-                logger.error("Error sending message to User: {} via Telegram: Status Code - {}, Response Body - {}", user.getLogin(), response.getStatusCode(), response.getBody());
+                logger.error("Error sending message to User: {} via Telegram: Status Code - {}, Response Body - {}", reminder.getUser().getName(), response.getStatusCode(), response.getBody());
             }
         } catch (RestClientException e) {
-            logger.error("Exception occurred while sending message to User: {} via Telegram.", user.getLogin(), e);
+            logger.error("Exception occurred while sending message to User: {} via Telegram.", reminder.getUser().getName(), e);
             throw new RuntimeException(e);
         }
     }
 
-    private String buildRequestBody(User user, Reminder reminder) {
-        return String.format("{\"chat_id\":\"%s\",\"text\":\"Title: %s\\nDescription: %s\\nRemind Date: %s\"}",
-                user.getChatId(), reminder.getTitle(), reminder.getDescription(), reminder.getRemind());
+    private String buildRequestBody(Reminder reminder) {
+        String chatIdPart = buildChatIdPart(reminder.getUser().getTelegramUserId());
+        String reminderPart = buildReminderPart(reminder);
+        return String.format("{%s, \"text\":\"%s\", \"parse_mode\":\"Markdown\"}", chatIdPart, reminderPart);
+    }
+
+    private String buildChatIdPart(Long telegramUserId) {
+        return String.format("\"%s\":%d", CHAT_ID_BODY_ELEMENT, telegramUserId);
+    }
+
+    private String buildReminderPart(Reminder reminder) {
+        return String.format("*Title:* %s\n*Description:* %s\n*Remind Date:* %s",
+                reminder.getTitle(), reminder.getDescription(), reminder.getRemind());
     }
 
     private HttpHeaders buildHeader() {

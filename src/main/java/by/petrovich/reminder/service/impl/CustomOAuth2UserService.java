@@ -39,14 +39,20 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
     }
 
     private User updateExistingUser(User user, String name, String oAuthProvider) {
-        user.setLogin(name);
+        user.setName(name);
         user.setOAuthProvider(oAuthProvider);
         return user;
     }
 
     private User createNewUser(String name, String email, String oAuthProvider) {
         // TODO: 18.08.2024 plug
-        return new User(name, "defaultPassword", email, "defChatId", oAuthProvider);
+        User user = new User();
+        user.setName(name);
+        user.setPassword("defaultPassword");
+        user.setEmail(email);
+        user.setTelegramUserId(0L);
+        user.setOAuthProvider(oAuthProvider);
+        return user;
     }
 
 }
