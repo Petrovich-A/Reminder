@@ -11,9 +11,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
-@Transactional
 public class ReminderSchedulerImpl implements ReminderScheduler {
     private final ReminderRepository reminderRepository;
     private final Sender telegramSender;
@@ -29,21 +29,28 @@ public class ReminderSchedulerImpl implements ReminderScheduler {
 
     @Override
     @Scheduled(fixedDelayString = "${scheduling.interval}")
+    @Transactional(readOnly = true)
     public void sendReminderViaTelegram() {
-        sendReminders(telegramSender);
+        List<Reminder> remindersToSend = findAllRemindersBeforeNow().stream()
+                .filter(reminder -> reminder.getUser().getTelegramUserId() != 0)
+                .collect(Collectors.toList());
+        sendReminders(remindersToSend, telegramSender);
     }
 
     @Override
     @Scheduled(fixedDelayString = "${scheduling.interval}")
+    @Transactional(readOnly = true)
     public void sendReminderViaEmail() {
-        sendReminders(emailSender);
+        List<Reminder> remindersToSend = findAllRemindersBeforeNow();
+        sendReminders(remindersToSend, emailSender);
     }
 
-    private void sendReminders(Sender sender) {
-        List<Reminder> remindersToSend = reminderRepository.findRemindersByRemindBefore(LocalDateTime.now());
-        remindersToSend.stream()
-                .filter(reminder -> reminder.getUser().getTelegramUserId() != 0)
-                .forEach(sender::sendMessage);
+    private List<Reminder> findAllRemindersBeforeNow() {
+        return reminderRepository.findRemindersByRemindBefore(LocalDateTime.now());
+    }
+
+    private void sendReminders(List<Reminder> reminders, Sender sender) {
+        reminders.forEach(sender::sendMessage);
     }
 
 }

@@ -24,11 +24,11 @@ VALUES (nextval('reminder_id_seq'), 'Gym', 'Workout session', '2024-11-12 19:00:
 
 -- 7
 INSERT INTO public.reminders (id, title, description, remind, user_id)
-VALUES (nextval('reminder_id_seq'), 'Book Flight', 'Travel to London', '2024-10-01 16:00:00', 41);
+VALUES (nextval('reminder_id_seq'), 'Book Flight', 'Travel to London', '2024-07-29 16:00:00', 41);
 
 -- 8
 INSERT INTO public.reminders (id, title, description, remind, user_id)
-VALUES (nextval('reminder_id_seq'), 'Email Client', 'Send project update', '2024-11-22 14:00:00', 41);
+VALUES (nextval('reminder_id_seq'), 'Email Client', 'Send project update', '2024-08-14 14:00:00', 41);
 
 -- 9
 INSERT INTO public.reminders (id, title, description, remind, user_id)

@@ -9,6 +9,7 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
@@ -46,7 +47,7 @@ public class User {
 
     @Column(name = "telegram_user_id", nullable = false)
     @NotNull
-    @Size(min = 1, max = 10)
+    @Min(1)
     private Long telegramUserId;
 
     @Column(name = "o_auth_provider", nullable = false)

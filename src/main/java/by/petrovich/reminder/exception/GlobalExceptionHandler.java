@@ -16,8 +16,14 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(ReminderNotFoundException.class)
     public ResponseEntity<String> handleReminderNotFoundException(ReminderNotFoundException e) {
-        logger.error("Reminder not found", e);
-        return ResponseEntity.status(NOT_FOUND).body("Reminder not found");
+        logger.error("Error occurred: {}", e.getMessage(), e);
+        return ResponseEntity.status(NOT_FOUND).body(e.getMessage());
+    }
+
+    @ExceptionHandler(UserNotFoundException.class)
+    public ResponseEntity<String> handleUserNotFoundException(UserNotFoundException e) {
+        logger.error("Error occurred: {}", e.getMessage(), e);
+        return ResponseEntity.status(NOT_FOUND).body(e.getMessage());
     }
 
     @ExceptionHandler(Exception.class)

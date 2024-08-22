@@ -1,25 +1,24 @@
 package by.petrovich.reminder.service.impl;
 
-import by.petrovich.reminder.exception.ReminderNotFoundException;
+import by.petrovich.reminder.exception.UserNotFoundException;
 import by.petrovich.reminder.model.User;
 import by.petrovich.reminder.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-
-import java.util.Optional;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class UserServiceImpl {
     private final UserRepository userRepository;
 
-    public void partialUpdate(long userId, Long userTelegramId) {
-        Optional<User> optionalUser = userRepository.findById(userId);
-        if (optionalUser.isEmpty()) {
-            throw new ReminderNotFoundException("User not found");
-        } else {
-            optionalUser.get().setTelegramUserId(userTelegramId);
-            userRepository.save(optionalUser.get());
-        }
+    @Transactional
+    public void partialUpdate(Long userId, Long userTelegramId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException(userId));
+
+        user.setTelegramUserId(userTelegramId);
+        userRepository.save(user);
     }
 }
