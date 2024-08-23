@@ -1,6 +1,6 @@
 package by.petrovich.reminder.job.telegram.comand;
 
-import com.pengrad.telegrambot.model.Message;
+import org.telegram.telegrambots.meta.api.objects.Message;
 
 public interface CommandHandler {
     void handle(Message message);

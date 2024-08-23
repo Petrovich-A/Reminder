@@ -13,6 +13,7 @@ public class AuthController {
 
     @GetMapping("/logout")
     public String clearCookies(HttpServletRequest request, HttpServletResponse response) {
+        request.getSession().invalidate();
         Cookie[] cookies = request.getCookies();
         if (cookies != null) {
             for (Cookie cookie : cookies) {

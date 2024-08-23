@@ -47,7 +47,6 @@ public class User {
 
     @Column(name = "telegram_user_id", nullable = false)
     @NotNull
-    @Min(1)
     private Long telegramUserId;
 
     @Column(name = "o_auth_provider", nullable = false)
