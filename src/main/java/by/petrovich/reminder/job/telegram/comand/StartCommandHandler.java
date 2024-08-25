@@ -8,6 +8,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.Message;
 
+import static by.petrovich.reminder.utils.EncodingUtils.decodeBase64;
+
 @Component
 @RequiredArgsConstructor
 public class StartCommandHandler implements CommandHandler {
@@ -25,9 +27,10 @@ public class StartCommandHandler implements CommandHandler {
         if (parts.length > 1) {
             try {
                 Long userTelegramId = message.getChatId();
-                Long userId = Long.valueOf(parts[1]);
-                logger.info("Received data from Telegram: userId: {}, userTelegramId: {}", userId, userTelegramId);
-                userService.partialUpdate(userId, userTelegramId);
+                String userIdEncode = parts[1];
+                Long decodeUserId = Long.parseLong(decodeBase64(userIdEncode));
+                logger.info("Received data from Telegram: userId: {}, userTelegramId: {}", decodeUserId, userTelegramId);
+                userService.partialUpdate(decodeUserId, userTelegramId);
             } catch (NumberFormatException e) {
                 logger.error("Invalid userId format: {}", parts[1]);
             }

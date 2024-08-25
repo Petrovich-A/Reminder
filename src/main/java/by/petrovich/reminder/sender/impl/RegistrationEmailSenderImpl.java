@@ -14,6 +14,8 @@ import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 
+import static by.petrovich.reminder.utils.EncodingUtils.encodeBase64;
+
 @RequiredArgsConstructor
 @Component
 public class RegistrationEmailSenderImpl implements Sender<User> {
@@ -59,7 +61,7 @@ public class RegistrationEmailSenderImpl implements Sender<User> {
     }
 
     private String prepareTelegramLinkWithUserId(Long userId) {
-        return String.format("%s?start=%s", linkToTelegramBot, userId);
+        return String.format("%s?start=%s", linkToTelegramBot, encodeBase64(userId.toString()));
     }
 
     private String prepareRegistrationBody(User user) {
