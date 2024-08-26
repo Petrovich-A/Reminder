@@ -1,7 +1,10 @@
 package by.petrovich.reminder.utils;
 
+import lombok.experimental.UtilityClass;
+
 import java.util.Base64;
 
+@UtilityClass
 public class EncodingUtils {
     public static String encodeBase64(String data) {
         return Base64.getEncoder().encodeToString(data.getBytes());

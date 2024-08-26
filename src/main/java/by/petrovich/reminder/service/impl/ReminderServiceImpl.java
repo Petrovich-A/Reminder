@@ -44,7 +44,7 @@ public class ReminderServiceImpl implements ReminderService {
     }
 
     @Override
-    public ReminderResponseDto find(Long id) throws ReminderNotFoundException {
+    public ReminderResponseDto find(Long id) {
         return reminderMapper.toResponseDto(reminderRepository.findById(id)
                 .orElseThrow(() -> new ReminderNotFoundException(id)));
     }
@@ -58,7 +58,7 @@ public class ReminderServiceImpl implements ReminderService {
 
     @Override
     @Transactional
-    public void delete(Long id) throws ReminderNotFoundException {
+    public void delete(Long id) {
         if (reminderRepository.existsById(id)) {
             reminderRepository.deleteById(id);
         } else {
@@ -68,7 +68,7 @@ public class ReminderServiceImpl implements ReminderService {
 
     @Override
     @Transactional
-    public ReminderResponseDto update(Long id, ReminderRequestDto reminderRequestDto) throws ReminderNotFoundException {
+    public ReminderResponseDto update(Long id, ReminderRequestDto reminderRequestDto) {
         Optional<Reminder> optionalReminder = reminderRepository.findById(id);
         if (optionalReminder.isEmpty()) {
             throw new ReminderNotFoundException(id);

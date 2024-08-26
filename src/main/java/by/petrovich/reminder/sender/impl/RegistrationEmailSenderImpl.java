@@ -6,8 +6,7 @@ import by.petrovich.reminder.sender.message.RegistrationMessageToSend;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
@@ -21,8 +20,8 @@ import static by.petrovich.reminder.utils.EncodingUtils.encodeBase64;
 
 @RequiredArgsConstructor
 @Component
+@Log4j2
 public class RegistrationEmailSenderImpl implements Sender<User, RegistrationMessageToSend> {
-    private static final Logger logger = LoggerFactory.getLogger(RegistrationEmailSenderImpl.class);
 
     @Value("${reminder.email.registration.subject}")
     private String registrationSubject;
@@ -49,14 +48,14 @@ public class RegistrationEmailSenderImpl implements Sender<User, RegistrationMes
             if (resource.exists()) {
                 mimeMessageHelper.addAttachment("logo_reminder.png", resource);
             } else {
-                logger.error("Attachment file not found: {}", registrationMessageToSend.getAttachment());
+                log.error("Attachment file not found: {}", registrationMessageToSend.getAttachment());
             }
 
             javaMailSender.send(mimeMessage);
-            logger.info("Message successfully sent to User: {} via email. Time: {}",
+            log.info("Message successfully sent to User: {} via email. Time: {}",
                     registrationMessageToSend.getToRecipient(), LocalDateTime.now());
         } catch (MessagingException e) {
-            logger.error("Error sending email to User: {}. Time: {}", registrationMessageToSend.getToRecipient(), LocalDateTime.now(), e);
+            log.error("Error sending email to User: {}.", registrationMessageToSend.getToRecipient(), e);
         }
     }
 

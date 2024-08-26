@@ -3,6 +3,7 @@ package by.petrovich.reminder.interceptor;
 import by.petrovich.reminder.controller.ReminderController;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.extern.log4j.Log4j2;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.lang.NonNull;
@@ -16,8 +17,8 @@ import static by.petrovich.reminder.constant.Constant.ID_REMINDER_PATTERN;
 import static jakarta.servlet.http.HttpServletResponse.SC_BAD_REQUEST;
 
 @Component
+@Log4j2
 public class ReminderValidationInterceptor implements HandlerInterceptor {
-    private static final Logger logger = LoggerFactory.getLogger(ReminderController.class);
 
     @Override
     public boolean preHandle(HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull Object handler) throws Exception {
@@ -34,7 +35,7 @@ public class ReminderValidationInterceptor implements HandlerInterceptor {
     private boolean isPageAndSizeValidated(HttpServletResponse response, String page, String size) throws IOException {
         if ((page != null && !page.isEmpty() && Integer.parseInt(page) < 0) ||
                 (size != null && !size.isEmpty() && Integer.parseInt(size) <= 0)) {
-            logger.error("Invalid page or size value: page={}, size={}", page, size);
+            log.error("Invalid page or size value: page={}, size={}", page, size);
             response.sendError(SC_BAD_REQUEST, "Invalid request parameters.");
             return false;
         }
@@ -46,7 +47,7 @@ public class ReminderValidationInterceptor implements HandlerInterceptor {
             String idStr = matcher.group(1);
             long id = Long.parseLong(idStr);
             if (id <= 0) {
-                logger.error("Invalid id supplied: {}", id);
+                log.error("Invalid id supplied: {}", id);
                 response.sendError(SC_BAD_REQUEST, "Invalid id value.");
                 return false;
             }

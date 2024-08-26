@@ -4,8 +4,7 @@ import by.petrovich.reminder.model.Reminder;
 import by.petrovich.reminder.sender.Sender;
 import by.petrovich.reminder.sender.message.MessageToSend;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -15,8 +14,8 @@ import java.time.LocalDateTime;
 
 @Component
 @RequiredArgsConstructor
+@Log4j2
 public class TelegramSender implements Sender<Reminder, MessageToSend> {
-    private static final Logger logger = LoggerFactory.getLogger(TelegramSender.class);
     private final TelegramLongPollingBot bot;
     private final String MESSAGE_SUBJECT = "💡 *Don't forget about your task:*";
 
@@ -29,12 +28,12 @@ public class TelegramSender implements Sender<Reminder, MessageToSend> {
         try {
             org.telegram.telegrambots.meta.api.objects.Message sentMessage = bot.execute(sendMessage);
             if (sentMessage != null) {
-                logger.info("Message successfully sent to User: {} via telegram. Time: {}", messageToSend.getToRecipient(), LocalDateTime.now());
+                log.info("Message successfully sent to User: {} via telegram. Time: {}", messageToSend.getToRecipient(), LocalDateTime.now());
             } else {
-                logger.error("Error sending sendMessage to User: {} via Telegram.", messageToSend.getToRecipient());
+                log.error("Error sending sendMessage to User: {} via Telegram.", messageToSend.getToRecipient());
             }
         } catch (TelegramApiException e) {
-            logger.error("Exception occurred while sending sendMessage to User: {} via Telegram.", messageToSend.getToRecipient(), e);
+            log.error("Exception occurred while sending sendMessage to User: {} via Telegram.", messageToSend.getToRecipient(), e);
             throw new RuntimeException(e);
         }
     }

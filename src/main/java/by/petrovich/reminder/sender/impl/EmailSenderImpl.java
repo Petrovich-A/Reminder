@@ -4,8 +4,7 @@ import by.petrovich.reminder.model.Reminder;
 import by.petrovich.reminder.sender.Sender;
 import by.petrovich.reminder.sender.message.MessageToSend;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.mail.MailException;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -15,9 +14,9 @@ import java.time.LocalDateTime;
 
 @RequiredArgsConstructor
 @Component
+@Log4j2
 public class EmailSenderImpl implements Sender<Reminder, MessageToSend> {
     public static final String EMAIL_SUBJECT = "Don't forget about your task!";
-    private static final Logger logger = LoggerFactory.getLogger(EmailSenderImpl.class);
     private final JavaMailSender javaMailSender;
 
     @Override
@@ -29,9 +28,9 @@ public class EmailSenderImpl implements Sender<Reminder, MessageToSend> {
             simpleMailMessage.setText(messageToSend.getBody());
             javaMailSender.send(simpleMailMessage);
         } catch (MailException e) {
-            logger.error("Error sending email to email: {}. Time: {}", messageToSend.getToRecipient(), LocalDateTime.now(), e);
+            log.error("Error sending email to: {}.", messageToSend.getToRecipient(), e);
         }
-        logger.info("Message successfully sent to email: {} via email. Time: {}", messageToSend.getToRecipient(), LocalDateTime.now());
+        log.info("Message successfully sent to email: {} via email. Time: {}", messageToSend.getToRecipient(), LocalDateTime.now());
     }
 
     @Override

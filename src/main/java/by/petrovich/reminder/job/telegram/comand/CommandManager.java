@@ -1,24 +1,18 @@
 package by.petrovich.reminder.job.telegram.comand;
 
-import by.petrovich.reminder.sender.impl.TelegramSender;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.Message;
 
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 @Component
+@Log4j2
 public class CommandManager {
-    private static final Logger logger = LoggerFactory.getLogger(TelegramSender.class);
-    private final Map<String, CommandHandler> commandHandlers = new HashMap<>();
+    private final Map<String, CommandHandler> commandHandlers;
 
-    public CommandManager(List<CommandHandler> handlers) {
-        for (CommandHandler handler : handlers) {
-            commandHandlers.put(handler.getCommand(), handler);
-        }
+    public CommandManager(Map<String, CommandHandler> commandHandlers) {
+        this.commandHandlers = commandHandlers;
     }
 
     public void processCommand(Message message) {
@@ -29,7 +23,7 @@ public class CommandManager {
             if (handler != null) {
                 handler.handle(message);
             } else {
-                logger.error("Command not found");
+                log.error("Command not found");
             }
         }
     }
