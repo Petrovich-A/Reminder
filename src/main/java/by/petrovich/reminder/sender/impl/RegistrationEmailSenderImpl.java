@@ -2,14 +2,17 @@ package by.petrovich.reminder.sender.impl;
 
 import by.petrovich.reminder.model.User;
 import by.petrovich.reminder.sender.Sender;
-import by.petrovich.reminder.sender.message.MessageToSend;
+import by.petrovich.reminder.sender.message.RegistrationMessageToSend;
+import jakarta.mail.MessagingException;
+import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.mail.MailException;
-import org.springframework.mail.SimpleMailMessage;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
@@ -18,7 +21,7 @@ import static by.petrovich.reminder.utils.EncodingUtils.encodeBase64;
 
 @RequiredArgsConstructor
 @Component
-public class RegistrationEmailSenderImpl implements Sender<User> {
+public class RegistrationEmailSenderImpl implements Sender<User, RegistrationMessageToSend> {
     private static final Logger logger = LoggerFactory.getLogger(RegistrationEmailSenderImpl.class);
 
     @Value("${reminder.email.registration.subject}")
@@ -33,35 +36,39 @@ public class RegistrationEmailSenderImpl implements Sender<User> {
     private final JavaMailSender javaMailSender;
 
     @Override
-    public void sendMessage(MessageToSend messageToSend) {
+    public void sendMessage(RegistrationMessageToSend registrationMessageToSend) {
         try {
-            SimpleMailMessage simpleMailMessage = new SimpleMailMessage();
-            simpleMailMessage.setTo(messageToSend.getToRecipient());
-            simpleMailMessage.setSubject(messageToSend.getSubject());
-            simpleMailMessage.setText(messageToSend.getBody());
-            javaMailSender.send(simpleMailMessage);
-        } catch (MailException e) {
-            logger.error("Error sending email to User: {}. Time: {}", messageToSend.getToRecipient(), LocalDateTime.now(), e);
+            MimeMessage mimeMessage = javaMailSender.createMimeMessage();
+            MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage, true);
+
+            mimeMessageHelper.setTo(registrationMessageToSend.getToRecipient());
+            mimeMessageHelper.setSubject(registrationMessageToSend.getSubject());
+            mimeMessageHelper.setText(registrationMessageToSend.getBody());
+
+            Resource resource = new ClassPathResource(registrationMessageToSend.getAttachment());
+            if (resource.exists()) {
+                mimeMessageHelper.addAttachment("logo_reminder.png", resource);
+            } else {
+                logger.error("Attachment file not found: {}", registrationMessageToSend.getAttachment());
+            }
+
+            javaMailSender.send(mimeMessage);
+            logger.info("Message successfully sent to User: {} via email. Time: {}",
+                    registrationMessageToSend.getToRecipient(), LocalDateTime.now());
+        } catch (MessagingException e) {
+            logger.error("Error sending email to User: {}. Time: {}", registrationMessageToSend.getToRecipient(), LocalDateTime.now(), e);
         }
-        logger.info("Message successfully sent to User: {} via email. Time: {}", messageToSend.getToRecipient(), LocalDateTime.now());
     }
 
     @Override
-    public MessageToSend createMessage(User user) {
-        String link = prepareTelegramLinkWithUserId(user.getId());
-        String body = registrationText
-                .replace("USER_NAME", user.getName())
-                .replace("LINK_TO_TELEGRAM_BOT_WITH_ENCRYPTED_USER_ID", link);
-
-        return MessageToSend.builder()
+    public RegistrationMessageToSend createMessage(User user) {
+        String logoPath = "static/logo_reminder.png";
+        return RegistrationMessageToSend.builder()
                 .toRecipient(user.getEmail())
                 .subject(registrationSubject)
-                .body(body)
+                .body(prepareRegistrationBody(user))
+                .attachment(logoPath)
                 .build();
-    }
-
-    private String prepareTelegramLinkWithUserId(Long userId) {
-        return String.format("%s?start=%s", linkToTelegramBot, encodeBase64(userId.toString()));
     }
 
     private String prepareRegistrationBody(User user) {
@@ -71,8 +78,8 @@ public class RegistrationEmailSenderImpl implements Sender<User> {
                 .replace("LINK_TO_TELEGRAM_BOT_WITH_ENCRYPTED_USER_ID", link);
     }
 
-    private String generateTokenForUser(User user) {
-        return user.getId().toString();
+    private String prepareTelegramLinkWithUserId(Long userId) {
+        return String.format("%s?start=%s", linkToTelegramBot, encodeBase64(userId.toString()));
     }
 
 }

@@ -2,8 +2,8 @@ package by.petrovich.reminder.sender;
 
 import by.petrovich.reminder.sender.message.MessageToSend;
 
-public interface Sender<T> {
-    void sendMessage(MessageToSend messageToSend);
+public interface Sender<E, M extends MessageToSend> {
+    void sendMessage(M messageToSend);
 
-    MessageToSend createMessage(T entity);
+    M createMessage(E entity);
 }

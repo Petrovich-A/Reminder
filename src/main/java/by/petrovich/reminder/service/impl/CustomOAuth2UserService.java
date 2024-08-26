@@ -3,7 +3,7 @@ package by.petrovich.reminder.service.impl;
 import by.petrovich.reminder.model.User;
 import by.petrovich.reminder.repository.UserRepository;
 import by.petrovich.reminder.sender.Sender;
-import by.petrovich.reminder.sender.message.MessageToSend;
+import by.petrovich.reminder.sender.message.RegistrationMessageToSend;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
@@ -18,7 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequest, OAuth2User> {
     private final UserRepository userRepository;
-    private final Sender<User> sendRegistrationMessage;
+    private final Sender<User, RegistrationMessageToSend> registrationMessageSender;
 
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
@@ -38,8 +38,8 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
         }else {
             user = createNewUser(name, email, oAuthProvider);
             User savedUser = userRepository.save(user);
-            MessageToSend messageToSend = sendRegistrationMessage.createMessage(savedUser);
-            sendRegistrationMessage.sendMessage(messageToSend);
+            RegistrationMessageToSend registrationMessageToSend = registrationMessageSender.createMessage(savedUser);
+            registrationMessageSender.sendMessage(registrationMessageToSend);
         }
         return oAuth2User;
     }

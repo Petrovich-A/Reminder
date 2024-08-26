@@ -5,8 +5,7 @@ import lombok.experimental.SuperBuilder;
 
 @SuperBuilder
 @Getter
-public class MessageToSend {
-    private String toRecipient;
-    private String subject;
-    private String body;
+public class RegistrationMessageToSend extends MessageToSend {
+    private String attachment;
+
 }

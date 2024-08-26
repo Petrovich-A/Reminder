@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 
 @Component
 @RequiredArgsConstructor
-public class TelegramSender implements Sender<Reminder> {
+public class TelegramSender implements Sender<Reminder, MessageToSend> {
     private static final Logger logger = LoggerFactory.getLogger(TelegramSender.class);
     private final TelegramLongPollingBot bot;
     private final String MESSAGE_SUBJECT = "💡 *Don't forget about your task:*";

@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 
 @RequiredArgsConstructor
 @Component
-public class EmailSenderImpl implements Sender<Reminder> {
+public class EmailSenderImpl implements Sender<Reminder, MessageToSend> {
     public static final String EMAIL_SUBJECT = "Don't forget about your task!";
     private static final Logger logger = LoggerFactory.getLogger(EmailSenderImpl.class);
     private final JavaMailSender javaMailSender;

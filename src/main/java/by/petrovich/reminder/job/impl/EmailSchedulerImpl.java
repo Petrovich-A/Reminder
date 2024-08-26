@@ -20,11 +20,11 @@ import java.util.List;
 public class EmailSchedulerImpl implements Scheduler<Reminder> {
     private final ReminderRepository reminderRepository;
     @Qualifier("emailSenderImpl")
-    private final Sender<Reminder> emailSender;
+    private final Sender<Reminder, MessageToSend> emailSender;
 
     @Autowired
     public EmailSchedulerImpl(ReminderRepository reminderRepository,
-                              @Qualifier("emailSenderImpl") Sender<Reminder> emailSender) {
+                              @Qualifier("emailSenderImpl") Sender<Reminder, MessageToSend> emailSender) {
         this.reminderRepository = reminderRepository;
         this.emailSender = emailSender;
     }

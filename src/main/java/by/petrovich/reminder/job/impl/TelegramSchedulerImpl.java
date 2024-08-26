@@ -19,7 +19,7 @@ import java.util.List;
 @EnableScheduling
 public class TelegramSchedulerImpl implements Scheduler<Reminder> {
     private final ReminderRepository reminderRepository;
-    private final Sender<Reminder> telegramSender;
+    private final Sender<Reminder, MessageToSend> telegramSender;
 
     @Override
     @Scheduled(fixedDelayString = "${scheduling.interval}")
