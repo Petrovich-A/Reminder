@@ -17,6 +17,16 @@ import java.time.LocalDateTime;
 @Log4j2
 public class EmailSenderImpl implements Sender<Reminder, MessageToSend> {
     public static final String EMAIL_SUBJECT = "Don't forget about your task!";
+    public static final String REMINDER_EMAIL_TEMPLATE = """
+            Reminder!
+
+            💡 %s
+
+            Title: %s
+            Description: %s
+            Reminder Date: %s
+
+            ⏰ Don't miss this event! 😃""";
     private final JavaMailSender javaMailSender;
 
     @Override
@@ -44,16 +54,7 @@ public class EmailSenderImpl implements Sender<Reminder, MessageToSend> {
 
     private String formatBody(Reminder reminder) {
         return String.format(
-                """
-                        Reminder!
-
-                        💡 %s
-
-                        Title: %s
-                        Description: %s
-                        Reminder Date: %s
-
-                        ⏰ Don't miss this event! 😃""",
+                REMINDER_EMAIL_TEMPLATE,
                 EMAIL_SUBJECT,
                 reminder.getTitle(),
                 reminder.getDescription(),

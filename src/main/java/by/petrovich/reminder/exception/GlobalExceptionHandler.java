@@ -36,4 +36,16 @@ public class GlobalExceptionHandler {
         log.error("Invalid argument", e);
         return ResponseEntity.status(BAD_REQUEST).body("Invalid argument");
     }
+
+    @ExceptionHandler(SearchCriteriaException.class)
+    public ResponseEntity<String> handleSearchCriteriaException(SearchCriteriaException e) {
+        log.error(e.getMessage());
+        return ResponseEntity.status(BAD_REQUEST).body(e.getMessage());
+    }
+
+    @ExceptionHandler(InvalidDataTimeSearchCriteriaException.class)
+    public ResponseEntity<String> handleInvalidDataTimeSearchCriteriaException(InvalidDataTimeSearchCriteriaException e) {
+        log.error(e.getMessage());
+        return ResponseEntity.status(BAD_REQUEST).body(e.getMessage());
+    }
 }

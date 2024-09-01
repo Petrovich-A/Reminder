@@ -1,9 +1,10 @@
 package by.petrovich.reminder.service.impl;
 
-import by.petrovich.reminder.constant.Constant;
 import by.petrovich.reminder.dto.request.ReminderRequestDto;
 import by.petrovich.reminder.dto.response.ReminderResponseDto;
+import by.petrovich.reminder.exception.InvalidDataTimeSearchCriteriaException;
 import by.petrovich.reminder.exception.ReminderNotFoundException;
+import by.petrovich.reminder.exception.SearchCriteriaException;
 import by.petrovich.reminder.mapper.ReminderMapper;
 import by.petrovich.reminder.model.Reminder;
 import by.petrovich.reminder.repository.ReminderRepository;
@@ -15,8 +16,10 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.DateTimeException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -80,27 +83,31 @@ public class ReminderServiceImpl implements ReminderService {
     }
 
     @Override
-    public List<ReminderResponseDto> findByTitle(String title) {
-        List<Reminder> reminders = reminderRepository.findByTitleContainingIgnoreCase(title);
-        return reminders.stream()
-                .map(reminderMapper::toResponseDto)
-                .collect(Collectors.toList());
-    }
+    public List<ReminderResponseDto> searchByCriteria(String title, String description, String date) {
+        if (title == null && description == null && date == null) {
+            throw new SearchCriteriaException("At least one search criteria must be provided");
+        }
 
-    @Override
-    public List<ReminderResponseDto> findByDescription(String description) {
-        List<Reminder> reminders = reminderRepository.findByDescriptionContainingIgnoreCase(description);
-        return reminders.stream()
-                .map(reminderMapper::toResponseDto)
-                .collect(Collectors.toList());
-    }
+        List<Reminder> reminders = new ArrayList<>();
+        if (title != null) {
+            reminders.addAll(reminderRepository.findByTitleContainingIgnoreCase(title));
+        }
 
-    @Override
-    public List<ReminderResponseDto> findByDate(String date) {
-        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern(FORMAT_PATTERN);
-        LocalDateTime dateTime = LocalDateTime.parse(date, dateTimeFormatter);
-        List<Reminder> reminders = reminderRepository.findRemindersByRemind(dateTime);
+        if (description != null) {
+            reminders.addAll(reminderRepository.findByDescriptionContainingIgnoreCase(description));
+        }
+
+        if (date != null) {
+            try {
+                DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern(FORMAT_PATTERN);
+                LocalDateTime dateTime = LocalDateTime.parse(date, dateTimeFormatter);
+                reminders.addAll(reminderRepository.findRemindersByRemind(dateTime));
+            } catch (DateTimeException e) {
+                throw new InvalidDataTimeSearchCriteriaException("Invalid date format. Please use \"" + FORMAT_PATTERN + "\" pattern.", e);
+            }
+        }
         return reminders.stream()
+                .distinct()
                 .map(reminderMapper::toResponseDto)
                 .collect(Collectors.toList());
     }

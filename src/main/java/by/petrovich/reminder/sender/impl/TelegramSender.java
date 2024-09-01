@@ -3,7 +3,6 @@ package by.petrovich.reminder.sender.impl;
 import by.petrovich.reminder.model.Reminder;
 import by.petrovich.reminder.sender.Sender;
 import by.petrovich.reminder.sender.message.MessageToSend;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
@@ -13,11 +12,24 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import java.time.LocalDateTime;
 
 @Component
-@RequiredArgsConstructor
 @Log4j2
 public class TelegramSender implements Sender<Reminder, MessageToSend> {
+    public static final String REMINDER_TELEGRAM_TEMPLATE = """
+            🔔 *Reminder!*
+
+            *%s*
+
+            *Title:* %s
+            *Description:* %s
+            *Reminder Date:* %s
+
+            ⏰ Don't miss this event! 😃""";
     private final TelegramLongPollingBot bot;
     private final String MESSAGE_SUBJECT = "💡 *Don't forget about your task:*";
+
+    public TelegramSender(TelegramLongPollingBot bot) {
+        this.bot = bot;
+    }
 
     @Override
     public void sendMessage(MessageToSend messageToSend) {
@@ -49,16 +61,7 @@ public class TelegramSender implements Sender<Reminder, MessageToSend> {
 
     private String formatBody(Reminder reminder) {
         return String.format(
-                """
-                        🔔 *Reminder!*
-
-                        *%s*
-
-                        *Title:* %s
-                        *Description:* %s
-                        *Reminder Date:* %s
-
-                        ⏰ Don't miss this event! 😃""",
+                REMINDER_TELEGRAM_TEMPLATE,
                 MESSAGE_SUBJECT,
                 reminder.getTitle(),
                 reminder.getDescription(),

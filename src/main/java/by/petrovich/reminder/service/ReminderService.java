@@ -22,9 +22,5 @@ public interface ReminderService {
 
     ReminderResponseDto update(Long id, ReminderRequestDto reminderRequestDto) throws ReminderNotFoundException;
 
-    List<ReminderResponseDto> findByTitle(String title);
-
-    List<ReminderResponseDto> findByDescription(String description);
-
-    List<ReminderResponseDto> findByDate(String date);
+    List<ReminderResponseDto> searchByCriteria(String title, String description, String date);
 }
