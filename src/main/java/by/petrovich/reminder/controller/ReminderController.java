@@ -1,12 +1,12 @@
-package by.petrovich.reminder.controller.impl;
+package by.petrovich.reminder.controller;
 
 import by.petrovich.reminder.dto.request.ReminderRequestDto;
 import by.petrovich.reminder.dto.response.ReminderResponseDto;
 import by.petrovich.reminder.service.impl.ReminderServiceImpl;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -25,41 +25,32 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 import static org.springframework.http.HttpStatus.CREATED;
-import static org.springframework.http.HttpStatus.NO_CONTENT;
-import static org.springframework.http.HttpStatus.OK;
 
 @RestController
 @RequestMapping("/api/v1/reminders")
 @RequiredArgsConstructor
-public class ReminderControllerImpl {
-    private static final Logger logger = LoggerFactory.getLogger(ReminderControllerImpl.class);
+public class ReminderController {
     private final ReminderServiceImpl reminderService;
 
     @GetMapping
-    public ResponseEntity<Page<ReminderResponseDto>> findAll(@RequestParam(name = "page", defaultValue = "0") int page,
-                                                             @RequestParam(name = "size", defaultValue = "3") int size) {
-        if (page < 0 || size <= 0) {
-            throw new IllegalArgumentException(String.format("Invalid page %d or size value: %d", page, size));
-        }
+    public ResponseEntity<Page<ReminderResponseDto>> findAll(@RequestParam(name = "page", defaultValue = "0") @Min(0) int page,
+                                                             @RequestParam(name = "size", defaultValue = "3") @Min(0) int size) {
         Pageable pageable = PageRequest.of(page, size);
-        return ResponseEntity.status(OK).body(reminderService.findAll(pageable));
+        return ResponseEntity.ok().body(reminderService.findAll(pageable));
     }
 
     @GetMapping("/sort")
-    public ResponseEntity<List<ReminderResponseDto>> findAll(@RequestParam(defaultValue = "ASC") String sortDirection,
-                                                             @RequestParam(defaultValue = "id") String sortBy) {
+    public ResponseEntity<List<ReminderResponseDto>> findAllSorted(@RequestParam(defaultValue = "ASC") String sortDirection,
+                                                                   @RequestParam(defaultValue = "id") String sortBy) {
         Sort.Direction direction = sortDirection.equalsIgnoreCase("asc") ? Sort.Direction.ASC : Sort.Direction.DESC;
         Sort sort = Sort.by(direction, sortBy);
-        return ResponseEntity.status(OK).body(reminderService.findAll(sort));
+        return ResponseEntity.ok().body(reminderService.findAll(sort));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ReminderResponseDto> find(@PathVariable Long id) {
-        if (id <= 0) {
-            throw new IllegalArgumentException("Invalid id supplied: " + id);
-        }
+    public ResponseEntity<ReminderResponseDto> find(@PathVariable @Positive Long id) {
         ReminderResponseDto reminderResponseDto = reminderService.find(id);
-        return ResponseEntity.status(OK).body(reminderResponseDto);
+        return ResponseEntity.ok().body(reminderResponseDto);
     }
 
     @PostMapping("/")
@@ -68,30 +59,22 @@ public class ReminderControllerImpl {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
+    public ResponseEntity<String> delete(@PathVariable @Positive Long id) {
         reminderService.delete(id);
-        return ResponseEntity.status(NO_CONTENT).build();
+        return ResponseEntity.ok("Reminder deleted");
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ReminderResponseDto> update(@PathVariable Long id,
+    public ResponseEntity<ReminderResponseDto> update(@PathVariable @Positive Long id,
                                                       @RequestBody @Valid ReminderRequestDto reminderRequestDto) {
-        return ResponseEntity.status(OK).body(reminderService.update(id, reminderRequestDto));
+        return ResponseEntity.ok().body(reminderService.update(id, reminderRequestDto));
     }
 
-    @GetMapping("/")
+    @GetMapping("/search")
     public ResponseEntity<List<ReminderResponseDto>> searchByCriteria(@RequestParam(value = "title", required = false) String title,
                                                                       @RequestParam(value = "description", required = false) String description,
                                                                       @RequestParam(value = "date", required = false) String date) {
-        if (title != null) {
-            return ResponseEntity.status(OK).body(reminderService.findByTitle(title));
-        } else if (description != null) {
-            return ResponseEntity.status(OK).body(reminderService.findByDescription(description));
-        } else if (date != null) {
-            return ResponseEntity.status(OK).body(reminderService.findByDate(date));
-        } else {
-            throw new IllegalArgumentException("At least one search criteria must be provided");
-        }
+        return ResponseEntity.ok().body(reminderService.searchByCriteria(title, description, date));
     }
 
 }

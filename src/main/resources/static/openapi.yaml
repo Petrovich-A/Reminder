@@ -1,0 +1,358 @@
+openapi: 3.0.2
+info:
+  version: 1.0.1
+  title: Reminder API
+  description: |
+    The Reminder API provides a comprehensive solution for managing reminders. It supports
+    operations for creating, retrieving, updating, and deleting reminders, as well as listing
+    and sorting them. The API is designed to handle reminders associated with specific users,
+    allowing them to be scheduled for future dates and times. It is ideal for applications
+    that require robust reminder functionality, including pagination and sorting capabilities.
+    The API is documented using OpenAPI 3.0.2, ensuring clear and standardized communication
+    with developers.
+  termsOfService: 'https://reminder.com/terms'
+  contact:
+    name: Alexandr Petrovich
+    url: 'https://reminder.com'
+    email: a.piatrovich@gmail.com
+  license:
+    name: Apache 2.0
+    url: 'https://www.apache.org/licenses/LICENSE-2.0.html'
+
+tags:
+  - name: Reminder
+    description: API for managing reminders
+
+paths:
+  /api/v1/reminders/{id}:
+    get:
+      summary: Retrieve a specific reminder by its unique identifier
+      description: |
+        This operation fetches a reminder by its ID. The ID is a unique identifier assigned to each reminder when it is created. 
+        Use this endpoint to retrieve the details of a specific reminder, such as its title, description, user ID, and scheduled time.
+      tags:
+        - Reminder
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: The unique identifier of the reminder to be retrieved
+          schema:
+            type: integer
+            example: 1
+      responses:
+        '200':
+          description: The requested reminder was successfully retrieved
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReminderResponseDto'
+              examples:
+                reminder:
+                  value:
+                    title: "Meeting"
+                    description: "Discuss project plans"
+                    userId: 1
+                    remind: "2024-05-02T11:30:00"
+        '400':
+          description: The provided ID is invalid or improperly formatted
+        '404':
+          description: No reminder was found with the specified ID
+
+    delete:
+      summary: Remove a specific reminder by its unique identifier
+      description: |
+        This operation deletes a reminder from the system using its unique identifier. 
+        The ID is required to identify which reminder to delete. Once deleted, the reminder cannot be recovered.
+      tags:
+        - Reminder
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: The unique identifier of the reminder to be deleted
+          schema:
+            type: integer
+            example: 999
+      responses:
+        '204':
+          description: The reminder was successfully deleted
+        '404':
+          description: No reminder was found with the specified ID
+
+    put:
+      summary: Update the details of a specific reminder by its unique identifier
+      description: |
+        This operation updates the details of an existing reminder. The reminder is identified by its unique ID. 
+        The updated details must be provided in the request body. Only the provided fields will be updated.
+      tags:
+        - Reminder
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: The unique identifier of the reminder to be updated
+          schema:
+            type: integer
+            example: 11
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReminderRequestDto'
+            example:
+              title: "Grocery"
+              description: "Buy something"
+              userId: 21
+              remind: "2024-07-10T18:00:00"
+      responses:
+        '200':
+          description: The reminder was successfully updated
+          content:
+            application/json:
+              schema:
+                example:
+                  id: 1
+                  title: "Grocery"
+                  description: "Buy something"
+                  userId: 11
+                  remind: "2024-12-10T18:00:00"
+        '404':
+          description: No reminder was found with the specified ID
+
+  /api/v1/reminders:
+
+    get:
+      summary: Retrieve a list of reminders with pagination support
+      description: |
+        This operation returns a paginated list of reminders. You can control the page number and the size of each page using query parameters. 
+        Pagination helps in managing large datasets by breaking them into smaller, manageable chunks.
+      tags:
+        - Reminder
+      parameters:
+        - in: query
+          name: page
+          description: The page number to retrieve, starting from 0
+          schema:
+            type: integer
+            default: 0
+            example: 1
+        - in: query
+          name: size
+          description: The number of reminders to display on each page
+          schema:
+            type: integer
+            default: 1
+            example: 3
+      responses:
+        '200':
+          description: A paginated list of reminders was successfully retrieved
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PageReminderResponseDto'
+        '400':
+          description: The provided page or size value is invalid
+        '500':
+          description: An internal server error occurred
+
+  /api/v1/reminders/:
+
+    get:
+      summary: Search reminders based on various criteria
+      description: |
+        This operation allows you to search for reminders by providing one or more search criteria. 
+        The available criteria include title, description, and date. If multiple criteria are provided, the search will return reminders that match all the criteria.
+      tags:
+        - Reminder
+      parameters:
+        - name: title
+          in: query
+          description: The title of the reminder to search for
+          required: false
+          schema:
+            type: string
+          example: "Dentist"
+        - name: description
+          in: query
+          description: The description of the reminder to search for
+          required: false
+          schema:
+            type: string
+          example: "Checkup appointment"
+        - name: date
+          in: query
+          description: The date of the reminder to search for in ISO 8601 format (YYYY-MM-DD HH:MM:SS)
+          required: false
+          schema:
+            type: string
+            format: string
+          example: "2024-09-08 10:00:00"
+      responses:
+        '200':
+          description: Reminders matching the provided criteria were successfully found
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ReminderResponseDto'
+              example:
+                - id: 31
+                  title: "Dentist"
+                  description: "Checkup appointment"
+                  remind: "2024-07-08T11:30:00"
+                  userId: 11
+                - id: 91
+                  title: "Deadline"
+                  description: "Submit report by 5pm"
+                  remind: "2024-09-29T17:00:00"
+                  userId: 11
+        '400':
+          description: At least one search criterion must be provided
+        '500':
+          description: An internal server error occurred
+
+    post:
+      summary: Create a new reminder with the specified details
+      description: |
+        This operation creates a new reminder in the system. The details of the reminder, including the title, description, user ID, and scheduled time, must be provided in the request body. 
+        Once created, the reminder will be stored and assigned a unique identifier.
+      tags:
+        - Reminder
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReminderRequestDto'
+            example:
+              title: "Finish Website Redesign"
+              description: "Complete all design and development tasks for the new website."
+              userId: 1
+              remind: "2024-12-02T11:30:00"
+      responses:
+        '201':
+          description: The reminder was successfully created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReminderResponseDto'
+        '400':
+          description: The input provided is invalid
+
+  /api/v1/reminders/sort:
+
+    get:
+      summary: Retrieve a list of reminders with custom sorting options
+      description: |
+        This operation returns a list of reminders sorted based on the specified criteria. 
+        You can sort the reminders by various fields, such as ID or title, in either ascending or descending order. 
+        This helps in organizing the reminders according to your needs.
+      tags:
+        - Reminder
+      parameters:
+        - in: query
+          name: sortDirection
+          description: The direction of sorting, either ascending (ASC) or descending (DESC)
+          schema:
+            type: string
+            default: ASC
+            enum:
+              - ASC
+              - DESC
+            example: ASC
+        - in: query
+          name: sortBy
+          description: The field by which to sort the reminders, such as ID or title
+          schema:
+            type: string
+            default: id
+            example: title
+      responses:
+        '200':
+          description: A list of reminders with the specified sorting was successfully retrieved
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ReminderResponseDto'
+        '400':
+          description: The provided sorting options are invalid
+        '500':
+          description: An internal server error occurred
+
+components:
+  schemas:
+    ReminderResponseDto:
+      type: object
+      properties:
+        id:
+          type: integer
+        title:
+          type: string
+        description:
+          type: string
+        userId:
+          type: integer
+        remind:
+          type: string
+          format: date-time
+      example:
+        id: 1
+        title: "Meeting"
+        description: "Discuss project plans"
+        userId: 5
+        remind: "2024-05-02T11:30:00"
+
+    ReminderRequestDto:
+      type: object
+      properties:
+        title:
+          type: string
+        description:
+          type: string
+        userId:
+          type: integer
+        remind:
+          type: string
+          format: date-time
+      example:
+        title: "Meeting"
+        description: "Discuss project plans"
+        userId: 5
+        remind: "2024-05-02T11:30:00"
+
+    PageReminderResponseDto:
+      type: object
+      properties:
+        content:
+          type: array
+          items:
+            $ref: '#/components/schemas/ReminderResponseDto'
+        totalElements:
+          type: integer
+        totalPages:
+          type: integer
+        size:
+          type: integer
+        number:
+          type: integer
+      example:
+        content:
+          - id: 1
+            title: "Meeting"
+            description: "Discuss project plans"
+            userId: 5
+            remind: "2024-05-02T11:30:00"
+          - id: 2
+            title: "Appointment"
+            description: "Doctor's visit"
+            userId: 6
+            remind: "2024-06-15T09:00:00"
+        totalElements: 50
+        totalPages: 10
+        size: 5
+        number: 0
