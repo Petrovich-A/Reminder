@@ -22,7 +22,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authorizeRequests ->
                         authorizeRequests
                                 .requestMatchers("/", "/login", "/oauth/**").permitAll()
-                                .requestMatchers("/api/v1/reminders/**").permitAll()
+                                .requestMatchers("/api/v1/reminders/**").authenticated()
                                 .anyRequest().authenticated()
                 )
                 .oauth2Login(oauth2Login ->
